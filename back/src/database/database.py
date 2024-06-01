@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
-from ..model.model import Base, User, SourceCode, Video, Comment, Like  # Baseをインポート
+from ..model.model import Base
 
 MYSQL_USER = os.getenv('MYSQL_USER', 'mysql')
 MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'mysql') 
