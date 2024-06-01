@@ -14,7 +14,3 @@ class User(Base):
     profile_image_url = Column(String(255))
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False, onupdate=datetime.datetime.utcnow)
-
-    # Relationship
-    videos = relationship("Video", back_populates="user")
-    source_codes = relationship("SourceCode", back_populates="user")
