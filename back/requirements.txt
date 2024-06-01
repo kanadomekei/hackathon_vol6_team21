@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+pymysql
+mysql-connector-python
+cryptography
+boto3
+python-multipart
+requests 
