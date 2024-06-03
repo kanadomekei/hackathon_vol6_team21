@@ -4,7 +4,7 @@ import os
 from ..model.model import Base
 
 MYSQL_USER = os.getenv('MYSQL_USER', 'mysql')
-MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'mysql') 
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'mysql_password') 
 MYSQL_HOST = os.getenv('MYSQL_HOST', 'hackathon_vol6_team21-db-1')
 MYSQL_PORT = os.getenv('MYSQL_PORT', '3306')
 MYSQL_DATABASE = os.getenv('MYSQL_DATABASE', 'mysql_study')
