@@ -1,8 +1,8 @@
 'use client';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import Login from '../../component/Login';
-import Logout from '../../component/Logout';
+import Login from '../../components/Login';
+import Logout from '../../components/Logout';
 
 export default function Home() {
 	const { data: session, status } = useSession();
