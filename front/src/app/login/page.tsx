@@ -1,7 +1,8 @@
 'use client';
 import { useSession } from 'next-auth/react';
-import Login from '../component/Login';
-import Logout from '../component/Logout';
+import Image from 'next/image';
+import Login from '../../component/Login';
+import Logout from '../../component/Logout';
 
 export default function Home() {
 	const { data: session, status } = useSession();
@@ -11,11 +12,6 @@ export default function Home() {
 				<div>
 					<p>セッションの期限：{session.expires}</p>
 					<p>ようこそ、{session.user?.name}さん</p>
-					<img
-						src={session.user?.image ?? ``}
-						alt=""
-						style={{ borderRadius: '50px' }}
-					/>
 					<div>
 						<Logout />
 					</div>
