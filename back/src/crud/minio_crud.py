@@ -14,7 +14,7 @@ def set_bucket_policy(bucket_name, minio_endpoint, minio_access_key, minio_secre
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     policy = {
         "Version": "2012-10-17",
         "Statement": [
@@ -39,7 +39,7 @@ def create_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_ke
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     try:
         s3.create_bucket(Bucket=bucket_name)
         print(f"Bucket {bucket_name} created")
@@ -55,7 +55,7 @@ def list_buckets(minio_endpoint, minio_access_key, minio_secret_key):
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     response = s3.list_buckets()
     for bucket in response['Buckets']:
         print(bucket['Name'])
@@ -69,7 +69,7 @@ def upload_file_to_minio(file_path, bucket_name, object_name, minio_endpoint, mi
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     try:
         s3.head_bucket(Bucket=bucket_name)
     except ClientError:
@@ -89,7 +89,7 @@ def download_file_from_minio(bucket_name, object_name, file_path, minio_endpoint
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     s3.download_file(bucket_name, object_name, file_path)
     print(f"File {object_name} downloaded to {file_path}")
     
@@ -107,7 +107,7 @@ def download_file_from_minio_by_url(file_url, file_path, minio_access_key, minio
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     try:
         s3.download_file(bucket_name, object_name, file_path)
         print(f"File {object_name} downloaded to {file_path}")
@@ -123,7 +123,7 @@ def list_objects_in_bucket(bucket_name, minio_endpoint, minio_access_key, minio_
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     response = s3.list_objects_v2(Bucket=bucket_name)
     for obj in response.get('Contents', []):
         print(obj['Key'])
@@ -137,7 +137,7 @@ def delete_object_from_minio(bucket_name, object_name, minio_endpoint, minio_acc
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     s3.delete_object(Bucket=bucket_name, Key=object_name)
     print(f"Object {object_name} deleted from {bucket_name}")
 
@@ -150,7 +150,7 @@ def delete_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_ke
                       aws_access_key_id=minio_access_key,
                       aws_secret_access_key=minio_secret_key,
                       config=Config(signature_version='s3v4'),
-                      region_name='us-east-1')
+                      region_name='ap-northeast-1')
     s3.delete_bucket(Bucket=bucket_name)
     print(f"Bucket {bucket_name} deleted")
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     minio_access_key = os.getenv('MINIO_ACCESS_KEY', 'minio')
     minio_secret_key = os.getenv('MINIO_SECRET_KEY', 'minio123')
 
-    file_path = '/home/keita/product/hackathon_vol6_team21/back/src/main.py'
+    file_path = '/home/keita/product/hackathon_vol6_team21/back/data/image1.jpg'
     bucket_name = 'mybucket1'
     object_name = 'file1.txt'
 
