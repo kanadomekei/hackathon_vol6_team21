@@ -61,6 +61,7 @@ services:
     volumes:
       - ./back:/app
     environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
