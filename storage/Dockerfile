@@ -1,0 +1,1 @@
+FROM minio/minio:RELEASE.2023-08-29T23-07-35Z.fips
