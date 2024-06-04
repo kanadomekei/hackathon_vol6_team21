@@ -1,5 +1,6 @@
 import os
-from langchain import OpenAI, ConversationChain
+from langchain_openai import OpenAI
+from langchain.chains import ConversationChain
 
 def explain_dish(image_path):
     # 環境変数からOpenAI APIキーを取得
