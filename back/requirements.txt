@@ -7,3 +7,6 @@ cryptography
 boto3
 python-multipart
 requests 
+langchain
+langchain_community
+openai
