@@ -16,6 +16,13 @@ def explain_dish(image_path):
     # OpenAI APIのクライアントを作成
     client = OpenAI(api_key=openai_api_key)
 
+    prompt_path = "./prompt.txt"
+    with open(prompt_path, "r", encoding='utf-8') as prompt_file:
+        prompt_text = prompt_file.read()
+
+    print(type(prompt_text))
+    print(prompt_text)
+    
     # チャットの応答を生成
     response = client.chat.completions.create(
         model="gpt-4o-2024-05-13",
@@ -23,16 +30,18 @@ def explain_dish(image_path):
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "この画像の料理について説明してください"},
+                    {"type": "text", "text": prompt_text},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
                 ],
             }
         ],
-        max_tokens=300,
+        max_tokens=1000,
     )
 
     return response.choices[0].message.content
 
+
+if __name__ == "__main__":
 # 関数を呼び出して結果を表示
-image_path = "data/image1.jpg"
-print(explain_dish(image_path))
+    image_path = "../../data/image1.jpg"
+    print(explain_dish(image_path))
