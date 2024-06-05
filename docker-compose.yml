@@ -39,6 +39,9 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     depends_on:
       - back
       - db
@@ -66,11 +69,13 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_URL=http://minio:9000
     depends_on:
       db:
         condition: service_healthy
     networks:
       - backend
+      - frontend
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 30s
@@ -98,6 +103,9 @@ services:
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
     entrypoint: sh
     command: -c "/opt/bin/minio server /export --address :9000 --console-address :9001"
+    networks:
+      - backend
+      - frontend
 
 networks:
   backend:

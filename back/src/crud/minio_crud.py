@@ -43,6 +43,7 @@ def create_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_ke
     try:
         s3.create_bucket(Bucket=bucket_name)
         print(f"Bucket {bucket_name} created")
+        set_bucket_policy(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
     except ClientError as e:
         print(f"Error creating bucket: {e}")
 
@@ -59,7 +60,7 @@ def list_buckets(minio_endpoint, minio_access_key, minio_secret_key):
     response = s3.list_buckets()
     for bucket in response['Buckets']:
         print(bucket['Name'])
-
+        
 def upload_file_to_minio(file_path, bucket_name, object_name, minio_endpoint, minio_access_key, minio_secret_key):
     """
     ファイルをMinIOにアップロードします。
@@ -73,8 +74,8 @@ def upload_file_to_minio(file_path, bucket_name, object_name, minio_endpoint, mi
     try:
         s3.head_bucket(Bucket=bucket_name)
     except ClientError:
-        s3.create_bucket(Bucket=bucket_name)
-        print(f"Bucket {bucket_name} created")
+        create_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
+        set_bucket_policy(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
     s3.upload_file(file_path, bucket_name, object_name)
     object_url = f"{minio_endpoint}/{bucket_name}/{object_name}"
     print(f"File {file_path} uploaded to {object_url}")
@@ -156,13 +157,13 @@ def delete_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_ke
 
 # 使用例
 if __name__ == "__main__":
-    minio_endpoint = os.getenv('MINIO_ENDPOINT', 'http://localhost:9000')
+    minio_endpoint = os.getenv('MINIO_ENDPOINT', 'http://minio:9000')
     minio_access_key = os.getenv('MINIO_ACCESS_KEY', 'minio')
     minio_secret_key = os.getenv('MINIO_SECRET_KEY', 'minio123')
-
-    file_path = '/home/keita/product/hackathon_vol6_team21/back/data/image1.jpg'
-    bucket_name = 'mybucket1'
-    object_name = 'file1.txt'
+    
+    file_path = '/app/data/image1.jpg'
+    bucket_name = 'mybucket'
+    object_name = 'image1.txt'
 
     # set_bucket_policy(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
     # create_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
