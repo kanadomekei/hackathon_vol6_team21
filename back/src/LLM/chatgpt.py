@@ -16,12 +16,10 @@ def explain_dish(image_path):
     # OpenAI APIのクライアントを作成
     client = OpenAI(api_key=openai_api_key)
 
-    prompt_path = "./prompt.txt"
+    prompt_path = "/app/src/LLM/prompt.txt"
     with open(prompt_path, "r", encoding='utf-8') as prompt_file:
         prompt_text = prompt_file.read()
 
-    print(type(prompt_text))
-    print(prompt_text)
     
     # チャットの応答を生成
     response = client.chat.completions.create(
