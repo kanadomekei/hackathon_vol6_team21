@@ -1,7 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button"
-import Sidebar from "@/components/Sidebar"
-import Image from 'next/image';
+import ImageGallery from "@/components/ImageGallery"
 import { useEffect, useState } from 'react';
 
 interface Post {
@@ -23,18 +21,14 @@ export default function Component() {
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
+  const handleUpload = () => {
+    // 画像アップロードのロジックをここに追加
+    console.log("画像アップロードボタンがクリックされました");
+  };
+
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex flex-wrap justify-center p-6 bg-white min-h-screen ml-64">
-        {images.map((src, index) => (
-          <div key={index} className="p-2">
-            <div className="relative w-48 h-48">
-              <Image src={src} alt={`image-${index}`} layout="fill" objectFit="cover" className="rounded-lg" />
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="flex relative">
+      <ImageGallery images={images} />
     </div>
   )
 }
