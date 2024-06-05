@@ -1,23 +1,38 @@
 import os
-from langchain_openai import OpenAI
-from langchain.chains import ConversationChain
+import base64
+from openai import OpenAI
+
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
 
 def explain_dish(image_path):
     # 環境変数からOpenAI APIキーを取得
     openai_api_key = os.getenv('OPENAI_API_KEY')
 
-    # OpenAIのインスタンスを作成
-    llm = OpenAI(api_key=openai_api_key)
+    # 画像をbase64にエンコード
+    base64_image = encode_image(image_path)
 
-    # 会話チェーンを作成
-    conversation = ConversationChain(llm=llm)
+    # OpenAI APIのクライアントを作成
+    client = OpenAI(api_key=openai_api_key)
 
-    # 画像のパスを使って料理の説明を求める
-    input_text = f"この画像の料理について説明してください: {image_path}"
-    response = conversation.predict(input=input_text)
+    # チャットの応答を生成
+    response = client.chat.completions.create(
+        model="gpt-4o-2024-05-13",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "この画像の料理について説明してください"},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                ],
+            }
+        ],
+        max_tokens=300,
+    )
 
-    return response
+    return response.choices[0].message.content
 
 # 関数を呼び出して結果を表示
-image_path = "data/image1.jpg"  
+image_path = "data/image1.jpg"
 print(explain_dish(image_path))
