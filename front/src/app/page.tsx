@@ -1,18 +1,34 @@
-import { Button } from "@/components/ui/button"
-import Sidebar from "@/components/Sidebar"
+"use client";
+import ImageGallery from "@/components/ImageGallery"
+import { useEffect, useState } from 'react';
+
+interface Post {
+  user_id: number;
+  image_url: string;
+  created_at: string;
+  caption: string;
+  id: number;
+}
 
 export default function Component() {
+
+  const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/posts')
+      .then(response => response.json())
+      .then(data => setImages(data.map((item: Post) => item.image_url)))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+  const handleUpload = () => {
+    // 画像アップロードのロジックをここに追加
+    console.log("画像アップロードボタンがクリックされました");
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
-      <h1 className="text-5xl font-bold mb-8">アプリ名</h1>
-      <div className="space-y-2 mb-8">
-        <p className="text-lg">アプリの説明</p>
-        <p className="text-lg">アプリの説明</p>
-        <p className="text-lg">アプリの説明</p>
-        <p className="text-lg">アプリの説明</p>
-      </div>
-      <Button className="bg-[#00BFFF] text-white">login</Button>
-	  <Sidebar />
+    <div className="flex relative">
+      <ImageGallery images={images} />
     </div>
   )
 }
