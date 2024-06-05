@@ -23,7 +23,7 @@ def explain_dish(image_path):
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "この画像の料理について説明してください"},
+                    {"type": "text", "text": "料理の画像を添付しました。この料理の原材料と調理工程について教えてください。"},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
                 ],
             }
@@ -33,6 +33,8 @@ def explain_dish(image_path):
 
     return response.choices[0].message.content
 
+
+if __name__ == "__main__":
 # 関数を呼び出して結果を表示
-image_path = "data/image1.jpg"
-print(explain_dish(image_path))
+    image_path = "../../data/image1.jpg"
+    print(explain_dish(image_path))
