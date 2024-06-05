@@ -156,13 +156,13 @@ def delete_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_ke
 
 # 使用例
 if __name__ == "__main__":
-    minio_endpoint = os.getenv('MINIO_ENDPOINT', 'http://localhost:9000')
+    minio_endpoint = os.getenv('MINIO_ENDPOINT', 'http://minio:9000')
     minio_access_key = os.getenv('MINIO_ACCESS_KEY', 'minio')
     minio_secret_key = os.getenv('MINIO_SECRET_KEY', 'minio123')
-
-    file_path = '/home/keita/product/hackathon_vol6_team21/back/data/image1.jpg'
-    bucket_name = 'mybucket1'
-    object_name = 'file1.txt'
+    
+    file_path = '/app/data/image1.jpg'
+    bucket_name = 'mybucket'
+    object_name = 'image1.txt'
 
     # set_bucket_policy(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
     # create_bucket(bucket_name, minio_endpoint, minio_access_key, minio_secret_key)
