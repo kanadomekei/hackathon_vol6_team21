@@ -66,11 +66,13 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - MINIO_URL=http://minio:9000
     depends_on:
       db:
         condition: service_healthy
     networks:
       - backend
+      - frontend
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080"]
       interval: 30s
@@ -98,6 +100,9 @@ services:
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
     entrypoint: sh
     command: -c "/opt/bin/minio server /export --address :9000 --console-address :9001"
+    networks:
+      - backend
+      - frontend
 
 networks:
   backend:
