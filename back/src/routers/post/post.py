@@ -50,14 +50,35 @@ def read_post(post_id: int, db: Session = Depends(get_db)):
     return db_post
 
 @router.put("/posts/{post_id}")
-def update_post(post_id: int, image_url: str, caption: str, db: Session = Depends(get_db)):
+def update_post(post_id: int, caption: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
     db_post = db.query(Post).filter(Post.id == post_id).first()
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post not found")
+    
+    # MinIOの設定
+    minio_endpoint = os.getenv('MINIO_ENDPOINT', 'http://minio:9000')
+    minio_access_key = os.getenv('MINIO_ACCESS_KEY', 'minio')
+    minio_secret_key = os.getenv('MINIO_SECRET_KEY', 'minio123')
+    bucket_name = 'mybucket'
+    
+    # ファイルを一時ディレクトリに保存
+    file_path = f"/tmp/{file.filename}"
+    with open(file_path, "wb") as buffer:
+        buffer.write(file.file.read())
+    
+    # MinIOにファイルをアップロード
+    object_name = file.filename
+    image_url = upload_file_to_minio(file_path, bucket_name, object_name, minio_endpoint, minio_access_key, minio_secret_key)
+    
+    # データベースの投稿を更新
     db_post.image_url = image_url
     db_post.caption = caption
     db.commit()
     db.refresh(db_post)
+    
+    # 一時ファイルを削除
+    os.remove(file_path)
+    
     return db_post
 
 @router.delete("/posts/{post_id}")
