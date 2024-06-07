@@ -56,15 +56,18 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
           onClick={closeModal}
         >
           <div
-            className="relative w-3/4 h-3/4"
+            className="relative w-3/4 h-3/4 flex items-center justify-center" // 親要素を中央に配置するためのスタイリングを追加
             onClick={(e) => e.stopPropagation()} // 画像部分のクリックイベントを無効化
           >
             <Image
               src={images[currentIndex]}
               alt={`Selected image ${currentIndex}`}
-              layout="fill"
+              layout="instrinsic"
+              width={500}
+              height={500}
               objectFit="contain"
-              className="rounded-lg"
+              className="cursor-pointer"
+              style={{maxWidth: '80%'}} // 横幅を親要素の90%に設定
             />
             <button
               className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-2xl"
