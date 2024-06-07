@@ -1,9 +1,10 @@
 name: Deployment
 
 on:
- push:
-   branches:
-     - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
  
 jobs:
  build:
@@ -11,7 +12,7 @@ jobs:
    steps:
      - name: Copy Environment
        run: |
-         scp -oStrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p ${{ secrets.USER_NAME }}@${{ secrets.BASTION_HOST_NAME }} -i private_key" -i private_key ${{ secrets.ENV }} ${{ secrets.USER_NAME }}@${{ secrets.HOST_NAME }}:~/hackathon_vol6_team21
+         scp -oStrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p ${{ secrets.USER_NAME }}@${{ secrets.BASTION_HOST_NAME }} -i private_key" -i private_key ${{ secrets.ENV }} ${{ secrets.USER_NAME }}@${{ secrets.HOST_NAME }}:~/${{ secrets.REPOSITORY_DIR }}
 
      - name: Deploy
        run: |
