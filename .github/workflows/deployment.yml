@@ -1,0 +1,21 @@
+name: Deployment
+
+on:
+ push:
+   branches:
+     - main
+ 
+jobs:
+ build:
+   runs-on: ubuntu-latest
+   steps:
+     - name: Copy Environment
+       run: |
+         scp -oStrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p ${{ secrets.USER_NAME }}@${{ secrets.BASTION_HOST_NAME }} -i private_key" -i private_key ${{ secrets.ENV }} ${{ secrets.USER_NAME }}@${{ secrets.HOST_NAME }}:~/hackathon_vol6_team21
+
+     - name: Deploy
+       run: |
+         echo "${{ secrets.PRIVATE_KEY }}" > env
+         echo "${{ secrets.PRIVATE_KEY }}" > private_key
+         chmod 600 private_key
+         ssh -oStrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p ${{ secrets.USER_NAME }}@${{ secrets.BASTION_HOST_NAME }} -i private_key" ${{ secrets.USER_NAME }}@${{ secrets.HOST_NAME }} -i private_key
