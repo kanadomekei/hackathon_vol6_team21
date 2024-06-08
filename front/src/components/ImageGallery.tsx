@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,6 +9,95 @@ interface ImageGalleryProps {
 export default function ImageGallery({ images }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [isLiked, setIsLiked] = useState<boolean[]>(Array(images.length).fill(false));
+  const [likeCounts, setLikeCounts] = useState<number[]>(Array(images.length).fill(0));
+  const [likeIds, setLikeIds] = useState<(number | null)[]>(Array(images.length).fill(null));
+
+  useEffect(() => {
+    if (currentIndex !== null) {
+      fetchLikeCount(currentIndex);
+    }
+  }, [currentIndex]);
+
+  const fetchLikeCount = async (index: number) => {
+    try {
+      const response = await fetch(`http://localhost:8080/likes/${index+1}/count`);
+      if (response.ok) {
+        const data = await response.json();
+        setLikeCounts(prevCounts => {
+          const newCounts = [...prevCounts];
+          newCounts[index] = data.likes_count;
+          return newCounts;
+        });
+      } else {
+        console.error(`Failed to fetch like count for index ${index}`);
+      }
+    } catch (error) {
+      console.error(`Error fetching like count for index ${index}:`, error);
+    }
+  };
+
+  const toggleLikeImage = async (e: React.MouseEvent, index: number) => {
+    e.stopPropagation();
+    const userId = 3; // ユーザーIDをハードコードしていますが、実際には適切な値を取得してください
+
+    try {
+      if (isLiked[index]) {
+        // いいね解除
+        const likeId = likeIds[index];
+        if (likeId !== null) {
+          const response = await fetch(`http://localhost:8080/likes/${likeId}`, {
+            method: 'DELETE',
+          });
+
+          if (response.ok) {
+            setIsLiked((prevLikedImages) => {
+              const newLikedImages = [...prevLikedImages];
+              newLikedImages[index] = false;
+              return newLikedImages;
+            });
+
+            setLikeIds((prevLikeIds) => {
+              const newLikeIds = [...prevLikeIds];
+              newLikeIds[index] = null;
+              return newLikeIds;
+            });
+
+            fetchLikeCount(index);
+          } else {
+            console.error(`Failed to delete like for index ${index}`);
+          }
+        }
+      } else {
+        // いいねする
+        const response = await fetch(`http://localhost:8080/likes?post_id=${index+1}&user_id=${userId}`, {
+          method: 'POST',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+          setIsLiked((prevLikedImages) => {
+            const newLikedImages = [...prevLikedImages];
+            newLikedImages[index] = true;
+            return newLikedImages;
+          });
+
+          setLikeIds((prevLikeIds) => {
+            const newLikeIds = [...prevLikeIds];
+            newLikeIds[index] = data.id;
+            return newLikeIds;
+          });
+
+          fetchLikeCount(index);
+        } else {
+          console.error(`Failed to like for index ${index}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Error toggling like for index ${index}:`, error);
+    }
+  };
 
   const openModal = (index: number) => {
     setCurrentIndex(index);
@@ -32,9 +121,10 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
     }
   };
 
+
   return (
     <div>
-      <div className="flex flex-wrap justify-center p-6 bg-white min-h-screen ml-64">
+      <div className="flex flex-wrap justify-start p-6 bg-white min-h-screen ml-64">
         {images.map((src, index) => (
           <div key={index} className="p-2">
             <div className="relative w-48 h-48">
@@ -74,7 +164,14 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                   className="cursor-pointer"
                 />
               </Link>
+              <button
+                className={`absolute right-64 top-1/2 transform -translate-y-1/2 px-16 py-8 rounded text-white text-3xl ${isLiked[currentIndex] ? 'bg-red-500' : 'bg-gray-500'}`}
+                onClick={(e) => toggleLikeImage(e, currentIndex)}
+              >
+               {likeCounts[currentIndex]} {isLiked[currentIndex] ? 'Liked!' : 'Liked'}
+              </button>
             </div>
+
             <button
               className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-2xl"
                 onClick={(e) => {

@@ -59,3 +59,10 @@ def google_auth_user(username: str, email: str, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+@router.get("/users/by-email/{email}")
+def get_user_id_by_email(email: str, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == email).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"user_id": db_user.id}
