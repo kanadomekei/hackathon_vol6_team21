@@ -9,6 +9,7 @@ export default function Sidebar() {
         <SidebarItem icon="home" label="Home" href="/" />
         <SidebarItem icon="search" label="Search" href="/with_login/search" />
         <SidebarItem icon="about" label="About" href="/with_login/about" />
+        <SidebarItem icon="画像一覧" label="images" href="/with_login/images" />
         <UserProfile name="User Name" avatarUrl="/path/to/avatar.jpg" />
       </div>
     </div>
