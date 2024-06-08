@@ -1,5 +1,7 @@
 import React, { FC, useState } from 'react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import Email from 'next-auth/providers/email';
 
 interface RecipeData {
   recipe_name: string;
@@ -8,6 +10,7 @@ interface RecipeData {
 }
 
 const CombinedUpload: FC = () => {
+  const { data: session, status } = useSession();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
@@ -62,6 +65,24 @@ const CombinedUpload: FC = () => {
     if (!file || !recipeData) {
       alert('ファイルまたはレシピデータがありません');
       return;
+    }
+    const email = session?.user?.email;
+    console.log('email', email);
+
+    if (email) {
+      try {
+        const response = await fetch(`http://localhost:8080/users/by-email/${encodeURIComponent(email)}`);
+        if (!response.ok) {
+          throw new Error('ユーザーIDの取得に失敗しました');
+        }
+        const data = await response.json();
+        const userId = data.user_id;
+        console.log('user_id', userId);
+        
+        // userIdを使って他の処理を続ける
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
     const userId = 1;
     const formData = new FormData();
