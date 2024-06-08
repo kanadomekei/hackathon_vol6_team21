@@ -6,6 +6,7 @@ from .routers.users.user import router as user_router
 from .routers.post.post import router as post_router
 from .routers.comment.comment import router as comment_router
 from .routers.like.like import router as like_router
+from .routers.recipe.recipe import router as recipe_router
 from .routers.ai.ai import router as ai_router
 
 app = FastAPI()
@@ -14,6 +15,7 @@ app.include_router(user_router)
 app.include_router(post_router)
 app.include_router(comment_router)
 app.include_router(like_router)
+app.include_router(recipe_router)
 app.include_router(ai_router)
 
 app.add_middleware(
