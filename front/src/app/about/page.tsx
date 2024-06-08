@@ -35,7 +35,7 @@ function MainComponent() {
         
 
             <section className="mb-8">
-            <h3 className="text-4xl font-roboto text-[#000000] mb-2">・serch</h3>
+            <h3 className="text-4xl font-roboto text-[#000000] mb-2">・search</h3>
             <p className="text-lg font-roboto text-[#000000]">
                 ここでは自分が持っている画像をアップロードすることでAIが自動的に料理を判断してレシピを提案してくれます!
             </p>
