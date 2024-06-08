@@ -1,18 +1,11 @@
 import React, { FC, useState } from 'react';
 import Image from 'next/image';
-interface RecipeData {
-  recipe_name: string;
-  ingredients: Record<string, string>;
-  cooking_process: string[];
-}
 
 const Upload: FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
+  const [recipeData, setRecipeData] = useState<any | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  
-  const userId = 1; 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -27,28 +20,27 @@ const Upload: FC = () => {
       alert('ファイルを選択してください');
       return;
     }
-  
+
     const formData = new FormData();
-    formData.append('img', file, file.name);
-  
+    formData.append('file', file);
+
     setIsUploading(true);
-  
+
     try {
-      const response = await fetch('http://localhost:8080/ai/create_recipe', {
+      const response = await fetch('http://localhost:8080/posts?user_id=1&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E', {
         method: 'POST',
         body: formData,
         headers: {
           'accept': 'application/json',
         },
       });
-  
+
       if (!response.ok) {
         throw new Error('アップロードに失敗しました');
       }
-  
+
       const data = await response.json();
       console.log('API Response:', data);
-  
       setRecipeData(data);
     } catch (error) {
       console.error('Error:', error);
@@ -99,15 +91,15 @@ const Upload: FC = () => {
         {recipeData && (
           <div className="mt-4 text-center text-lg text-gray-700">
             <h2 className="text-xl font-bold mb-2">{recipeData.recipe_name}</h2>
-            <h3 className="text-lg font-semibold mb-2">材料</h3>
+            <h3 className="text-lg font-semibold mb-2">材料:</h3>
             <ul className="list-disc list-inside mb-4">
-              {Object.entries(recipeData.ingredients).map(([ingredient, amount]) => (
-                <li key={ingredient}>{ingredient}: {amount}</li>
+              {recipeData.ingredients?.map((ingredient: { name: string, quantity: string }) => (
+                <li key={ingredient.name}>{ingredient.name}: {ingredient.quantity}</li>
               ))}
             </ul>
-            <h3 className="text-lg font-semibold mb-2">調理工程</h3>
+            <h3 className="text-lg font-semibold mb-2">調理工程:</h3>
             <ol className="list-decimal list-inside">
-              {recipeData.cooking_process.map((step: string, index: number) => (
+              {recipeData.cooking_process?.map((step: string, index: number) => (
                 <li key={index}>{step}</li>
               ))}
             </ol>
@@ -122,5 +114,3 @@ const Upload: FC = () => {
 };
 
 export default Upload;
-
-
