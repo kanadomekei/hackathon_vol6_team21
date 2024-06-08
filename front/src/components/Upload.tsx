@@ -81,10 +81,25 @@ const CombinedUpload: FC = () => {
         throw new Error('最終アップロードに失敗しました');
       }
       const responseData = await response.json();
-      console.log('API Response:', responseData.id);
-      console.log('recipe_name:', recipeData.recipe_name);
-      console.log('Ingredients:', Object.keys(recipeData.ingredients).join(', '));
-      console.log('Cooking Process:', recipeData.cooking_process.join(', '));
+      console.log('API Response:', typeof responseData.id, responseData.id);
+      console.log('recipe_name:', typeof recipeData.recipe_name, recipeData.recipe_name);
+      console.log('Ingredients:', Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(','));
+      console.log('Cooking Process:', typeof recipeData.cooking_process.join(', '), recipeData.cooking_process.join(','));
+
+      const ingredients = Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(' ');
+      const instructions = recipeData.cooking_process.join(' ');
+
+      const recipeResponse = await fetch('http://localhost:8080/recipes?post_id=1&ingredients=' + encodeURIComponent(ingredients) + '&instructions=' + encodeURIComponent(instructions), {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+        },
+      });
+
+      if (!recipeResponse.ok) {
+        throw new Error('レシピのアップロードに失敗しました');
+      }
+
       alert('アップロード成功！');
     } catch (error) {
       console.error('Error:', error);
