@@ -46,7 +46,7 @@ const CombinedUpload: FC = () => {
       }
 
       const data = await response.json();
-      console.log('API Response:', data);
+      // console.log('API Response:', data);
       setRecipeData(data);
     } catch (error) {
       console.error('Error:', error);
@@ -80,7 +80,11 @@ const CombinedUpload: FC = () => {
       if (!response.ok) {
         throw new Error('最終アップロードに失敗しました');
       }
-
+      const responseData = await response.json();
+      console.log('API Response:', responseData.id);
+      console.log('recipe_name:', recipeData.recipe_name);
+      console.log('Ingredients:', Object.keys(recipeData.ingredients).join(', '));
+      console.log('Cooking Process:', recipeData.cooking_process.join(', '));
       alert('アップロード成功！');
     } catch (error) {
       console.error('Error:', error);
