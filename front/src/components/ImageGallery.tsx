@@ -153,7 +153,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
               className="flex items-center justify-center" // fullの指定削除
               onClick={(e) => e.stopPropagation()} // 追加
             >
-              <Link href={`/recipes/${currentIndex}`}>
+              <Link href={`recipes/${currentIndex+1}`}>
                 <Image
                   src={images[currentIndex]}
                   alt={`Selected image ${currentIndex}`}
