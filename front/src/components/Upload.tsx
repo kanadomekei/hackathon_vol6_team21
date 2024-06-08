@@ -94,10 +94,22 @@ const CombinedUpload: FC = () => {
 
     const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
     if (responseData) {
-      const ingredients = Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(' ');
-      const instructions = recipeData.cooking_process.join(' ');
 
-      await uploadData(`http://localhost:8080/recipes?post_id=${responseData.post_id}&ingredients=` + encodeURIComponent(ingredients) + '&instructions=' + encodeURIComponent(instructions), new FormData(), 'レシピのアップロードに失敗しました');
+      console.log(recipeData);
+      console.log(JSON.stringify(recipeData, null, 2));
+
+      // recipeデータをjson形式に変換した後、APIに送信
+      const jsonResponse = await fetch('http://localhost:8080/recipes?post_id=1', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recipeData),
+      });
+
+      if (!jsonResponse.ok) {
+        throw new Error('レシピデータの送信に失敗しました');
+      }
       alert('アップロード成功！');
     }
   };
