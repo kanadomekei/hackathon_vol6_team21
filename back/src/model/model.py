@@ -80,8 +80,6 @@ class Recipe(Base):
 
     post_id = Column(Integer, ForeignKey('posts.id'), nullable=False)
 
-    ingredients = Column(JSON)
-
-    instructions = Column(JSON)
+    details = Column(JSON, nullable=False)
 
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
