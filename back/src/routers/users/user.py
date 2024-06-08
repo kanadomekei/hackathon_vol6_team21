@@ -48,3 +48,14 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.delete(db_user)
     db.commit()
     return {"message": f"User {user_id} deleted"}
+
+@router.post("/users/google-auth")
+def google_auth_user(username: str, email: str, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.email == email).first()
+    if existing_user:
+        return existing_user
+    db_user = User(username=username, email=email, password="")  # パスワードは空にするか、適切に処理
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
