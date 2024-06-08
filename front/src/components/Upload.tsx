@@ -1,18 +1,17 @@
 import React, { FC, useState } from 'react';
 import Image from 'next/image';
+
 interface RecipeData {
   recipe_name: string;
   ingredients: Record<string, string>;
   cooking_process: string[];
 }
 
-const Upload: FC = () => {
+const CombinedUpload: FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  
-  const userId = 1; 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -22,17 +21,17 @@ const Upload: FC = () => {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUploadRecipe = async () => {
     if (!file) {
       alert('ファイルを選択してください');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('img', file, file.name);
-  
+
     setIsUploading(true);
-  
+
     try {
       const response = await fetch('http://localhost:8080/ai/create_recipe', {
         method: 'POST',
@@ -41,18 +40,50 @@ const Upload: FC = () => {
           'accept': 'application/json',
         },
       });
-  
+
       if (!response.ok) {
-        throw new Error('アップロードに失敗しました');
+        throw new Error('レシピ生成に失敗しました');
       }
-  
+
       const data = await response.json();
       console.log('API Response:', data);
-  
       setRecipeData(data);
     } catch (error) {
       console.error('Error:', error);
       setRecipeData(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFinalUpload = async () => {
+    if (!file || !recipeData) {
+      alert('ファイルまたはレシピデータがありません');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('caption', recipeData.recipe_name); 
+
+    setIsUploading(true);
+
+    try {
+      const response = await fetch('http://localhost:8080/posts?user_id=1&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('最終アップロードに失敗しました');
+      }
+
+      alert('アップロード成功！');
+    } catch (error) {
+      console.error('Error:', error);
     } finally {
       setIsUploading(false);
     }
@@ -91,26 +122,32 @@ const Upload: FC = () => {
         )}
         <button
           className="w-full py-3 mt-4 bg-blue-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-blue-400"
-          onClick={handleUpload}
+          onClick={handleUploadRecipe}
           disabled={isUploading}
         >
-          {isUploading ? 'アップロード中...' : 'アップロード'}
+          {isUploading ? 'レシピ生成中...' : 'レシピ生成'}
         </button>
         {recipeData && (
-          <div className="mt-4 text-center text-lg text-gray-700">
-            <h2 className="text-xl font-bold mb-2">{recipeData.recipe_name}</h2>
-            <h3 className="text-lg font-semibold mb-2">材料</h3>
-            <ul className="list-disc list-inside mb-4">
-              {Object.entries(recipeData.ingredients).map(([ingredient, amount]) => (
-                <li key={ingredient}>{ingredient}: {amount}</li>
-              ))}
-            </ul>
-            <h3 className="text-lg font-semibold mb-2">調理工程</h3>
-            <ol className="list-decimal list-inside">
-              {recipeData.cooking_process.map((step: string, index: number) => (
-                <li key={index}>{step}</li>
-              ))}
-            </ol>
+          <div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
+              <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
+              <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
+              <ul className="list-disc pl-5">
+                {Object.entries(recipeData.ingredients).map(([ingredient, quantity]) => (
+                  <li key={ingredient} className="text-lg text-gray-900">{`${ingredient}: ${quantity}`}</li>
+                ))}
+              </ul>
+              <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
+              <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process}</p>
+
+            </div>  
+            <button
+              className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
+              onClick={handleFinalUpload}
+            >
+              {isUploading ? '最終アップロード中...' : '最終アップロード'}
+            </button>
           </div>
         )}
       </div>
@@ -121,6 +158,4 @@ const Upload: FC = () => {
   );
 };
 
-export default Upload;
-
-
+export default CombinedUpload;
