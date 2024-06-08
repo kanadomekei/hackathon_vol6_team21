@@ -21,6 +21,30 @@ const CombinedUpload: FC = () => {
     }
   };
 
+  const uploadData = async (url: string, formData: FormData, errorMessage: string) => {
+    setIsUploading(true);
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(errorMessage);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleUploadRecipe = async () => {
     if (!file) {
       alert('ファイルを選択してください');
@@ -30,30 +54,8 @@ const CombinedUpload: FC = () => {
     const formData = new FormData();
     formData.append('img', file, file.name);
 
-    setIsUploading(true);
-
-    try {
-      const response = await fetch('http://localhost:8080/ai/create_recipe', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'accept': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('レシピ生成に失敗しました');
-      }
-
-      const data = await response.json();
-      // console.log('API Response:', data);
-      setRecipeData(data);
-    } catch (error) {
-      console.error('Error:', error);
-      setRecipeData(null);
-    } finally {
-      setIsUploading(false);
-    }
+    const data = await uploadData('http://localhost:8080/ai/create_recipe', formData, 'レシピ生成に失敗しました');
+    setRecipeData(data);
   };
 
   const handleFinalUpload = async () => {
@@ -61,35 +63,18 @@ const CombinedUpload: FC = () => {
       alert('ファイルまたはレシピデータがありません');
       return;
     }
-
+    const userId = 1;
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('caption', recipeData.recipe_name); 
-
-    setIsUploading(true);
-
-    try {
-      const response = await fetch('http://localhost:8080/posts?user_id=1&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'accept': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('最終アップロードに失敗しました');
-      }
-      const responseData = await response.json();
-      console.log('API Response:', responseData.id);
-      console.log('recipe_name:', recipeData.recipe_name);
-      console.log('Ingredients:', Object.keys(recipeData.ingredients).join(', '));
-      console.log('Cooking Process:', recipeData.cooking_process.join(', '));
+    formData.append('caption', recipeData.recipe_name);
+  
+    const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
+    if (responseData) {
+      const ingredients = Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(' ');
+      const instructions = recipeData.cooking_process.join(' ');
+  
+      await uploadData(`http://localhost:8080/recipes?post_id=${responseData.post_id}&ingredients=` + encodeURIComponent(ingredients) + '&instructions=' + encodeURIComponent(instructions), new FormData(), 'レシピのアップロードに失敗しました');
       alert('アップロード成功！');
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -144,22 +129,21 @@ const CombinedUpload: FC = () => {
               </ul>
               <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
               <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process}</p>
-
             </div>  
             <button
-              className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
-              onClick={handleFinalUpload}
-            >
-              {isUploading ? '最終アップロード中...' : '最終アップロード'}
-            </button>
-          </div>
-        )}
-      </div>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-      `}</style>
-    </div>
-  );
-};
-
-export default CombinedUpload;
+                            className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
+                            onClick={handleFinalUpload}
+                          >
+                            {isUploading ? '最終アップロード中...' : '最終アップロード'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <style jsx global>{`
+                      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+                    `}</style>
+                  </div>
+                );
+              };
+              
+              export default CombinedUpload;
