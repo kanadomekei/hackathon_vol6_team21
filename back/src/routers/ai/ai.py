@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from ...database.database import get_db
 from ...model.model import User
 from ...LLM.chatgpt import explain_dish
+import json
 
 router = APIRouter()
 
@@ -18,4 +19,10 @@ def create_recipe(img: UploadFile = File(...)):
     with open(img_path, "wb") as buffer:
         buffer.write(img.file.read())
 
-    return explain_dish(img_path)
+    response_text = explain_dish(img_path)
+    try:
+        response_json = json.loads(response_text)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Failed to decode JSON response from OpenAI")
+
+    return response_json
