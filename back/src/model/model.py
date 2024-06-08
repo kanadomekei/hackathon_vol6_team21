@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text, JSON
 
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -80,8 +80,8 @@ class Recipe(Base):
 
     post_id = Column(Integer, ForeignKey('posts.id'), nullable=False)
 
-    ingredients = Column(Text)
+    ingredients = Column(JSON)
 
-    instructions = Column(Text)
+    instructions = Column(JSON)
 
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
