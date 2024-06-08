@@ -1,54 +1,50 @@
-"use client";
-import { useEffect, useState } from 'react';
+'use client';
 import { useSession } from 'next-auth/react';
-import ImageGallery from "@/components/ImageGallery";
-import Modal from '@/components/Modal';
-import FloatingButton from '@/components/FloatingButton';
-import Sidebar from '@/components/Sidebar';
+import axios from 'axios';
+import type { AxiosResponse } from 'axios';
+import { useEffect } from 'react';
+import Image from 'next/image';
+import Login from '@/components/Login';
+import Logout from '@/components/Logout';
 
-interface Post {
-  user_id: number;
-  image_url: string;
-  created_at: string;
-  caption: string;
-  id: number;
-}
+export default function Home() {
+	const { data: session, status } = useSession();
 
-export default function Component() {
-  const { data: session, status } = useSession();
-  const [images, setImages] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+	useEffect(() => {
+		if (status === 'authenticated' && session?.user) {
+			const { name, email } = session.user;
+			axios.post(`http://localhost:8080/users/google-auth`, null, {
+				params: { username: name, email: email }
+			})
+			.then((response: AxiosResponse) => {
+				console.log('User authenticated:', response.data);
+			})
+			.catch((error: unknown) => {
+				console.error('Error during authentication:', error);
+			});
+		}
+	}, [status, session]);
 
-  const handleOpen = () => setIsOpen(true);
-  const handleClose = () => setIsOpen(false);
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/posts');
-        const data: Post[] = await response.json();
-        setImages(data.map((item: Post) => item.image_url));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchImages();
-  }, []);
-
-  const handleUpload = () => {
-    // 画像アップロードのロジックをここに追加
-    console.log("画像アップロードボタンがクリックされました");
-  };
-
-  return (
-    <div className="flex relative">
-      <Sidebar />
-      <div className="ml-64"> {/* Sidebarの幅に合わせてマージンを追加 */}
-        <ImageGallery images={images} />
-        <FloatingButton handleOpen={handleOpen} />
-        <Modal isOpen={isOpen} handleClose={handleClose} />
-      </div>
-    </div>
-  );
+	return (
+		<div className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-fixed" style={{backgroundImage:'url(/images/title.png)'}}>
+			<div className="flex flex-col items-center mb-8">
+				<Image
+					src="/images/logo.png"
+					alt="Chef's hat and utensils icon"
+					width={400}
+					height={400}
+					className="mb-4"
+				/>
+			</div>
+			<div className="text-center">
+				<p className="text-4xl font-roboto text-[#000000] mb-4">
+					写真からレシピが生まれる！
+				</p>
+				<p className="text-3xl font-roboto text-[#000000] mb-4">
+					簡単クッキングで、毎日の食卓をもっと豊かに！
+				</p>
+				{status === 'authenticated' ? <Logout /> : <Login />}
+			</div>
+		</div>
+	);
 }
