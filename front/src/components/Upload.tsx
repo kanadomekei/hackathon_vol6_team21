@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 
 interface RecipeData {
   recipe_name: string;
@@ -8,6 +9,7 @@ interface RecipeData {
 }
 
 const CombinedUpload: FC = () => {
+  const { data: session } = useSession();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
@@ -45,6 +47,20 @@ const CombinedUpload: FC = () => {
     }
   };
 
+  const fetchUserId = async (email: string) => {
+    try {
+      const response = await fetch(`http://localhost:8080/users/by-email/${encodeURIComponent(email)}`);
+      if (!response.ok) {
+        throw new Error('ユーザーIDの取得に失敗しました');
+      }
+      const data = await response.json();
+      return data.user_id;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  };
+
   const handleUploadRecipe = async () => {
     if (!file) {
       alert('ファイルを選択してください');
@@ -63,16 +79,24 @@ const CombinedUpload: FC = () => {
       alert('ファイルまたはレシピデータがありません');
       return;
     }
-    const userId = 1;
+
+    const email = session?.user?.email;
+    const userId = email ? await fetchUserId(email) : null;
+    console.log(userId);
+    if (!userId) {
+      alert('ユーザーIDの取得に失敗しました');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('caption', recipeData.recipe_name);
-  
+
     const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
     if (responseData) {
       const ingredients = Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(' ');
       const instructions = recipeData.cooking_process.join(' ');
-  
+
       await uploadData(`http://localhost:8080/recipes?post_id=${responseData.post_id}&ingredients=` + encodeURIComponent(ingredients) + '&instructions=' + encodeURIComponent(instructions), new FormData(), 'レシピのアップロードに失敗しました');
       alert('アップロード成功！');
     }
@@ -131,19 +155,17 @@ const CombinedUpload: FC = () => {
               <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process}</p>
             </div>  
             <button
-                            className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
-                            onClick={handleFinalUpload}
-                          >
-                            {isUploading ? '最終アップロード中...' : '最終アップロード'}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    <style jsx global>{`
-                      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-                    `}</style>
-                  </div>
-                );
-              };
-              
-              export default CombinedUpload;
+              className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
+              onClick={handleFinalUpload}
+              disabled={isUploading}
+            >
+              {isUploading ? 'アップロード中...' : 'アップロード'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CombinedUpload;

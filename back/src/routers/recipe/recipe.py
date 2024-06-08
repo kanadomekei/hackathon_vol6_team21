@@ -11,8 +11,8 @@ def read_all_recipes(db: Session = Depends(get_db)):
     return recipes
 
 @router.post("/recipes")
-def create_recipe(post_id: int, ingredients: str, instructions: str, db: Session = Depends(get_db)):
-    db_recipe = Recipe(post_id=post_id, ingredients=ingredients, instructions=instructions)
+def create_recipe(post_id: int, details: dict, db: Session = Depends(get_db)):
+    db_recipe = Recipe(post_id=post_id, details=details)
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
@@ -26,12 +26,11 @@ def read_recipe(recipe_id: int, db: Session = Depends(get_db)):
     return db_recipe
 
 @router.put("/recipes/{recipe_id}")
-def update_recipe(recipe_id: int, ingredients: str, instructions: str, db: Session = Depends(get_db)):
+def update_recipe(recipe_id: int, details: dict, db: Session = Depends(get_db)):
     db_recipe = db.query(Recipe).filter(Recipe.id == recipe_id).first()
     if db_recipe is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
-    db_recipe.ingredients = ingredients
-    db_recipe.instructions = instructions
+    db_recipe.details = details
     db.commit()
     db.refresh(db_recipe)
     return db_recipe
