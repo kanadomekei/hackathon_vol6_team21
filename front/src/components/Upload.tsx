@@ -82,7 +82,6 @@ const CombinedUpload: FC = () => {
 
     const email = session?.user?.email;
     const userId = email ? await fetchUserId(email) : null;
-    console.log(userId);
     if (!userId) {
       alert('ユーザーIDの取得に失敗しました');
       return;
@@ -94,10 +93,18 @@ const CombinedUpload: FC = () => {
 
     const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
     if (responseData) {
-      const ingredients = Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(' ');
-      const instructions = recipeData.cooking_process.join(' ');
+      const post_id = responseData.id;
+      const jsonResponse = await fetch(`http://localhost:8080/recipes?post_id=${post_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recipeData),
+      });
 
-      await uploadData(`http://localhost:8080/recipes?post_id=${responseData.post_id}&ingredients=` + encodeURIComponent(ingredients) + '&instructions=' + encodeURIComponent(instructions), new FormData(), 'レシピのアップロードに失敗しました');
+      if (!jsonResponse.ok) {
+        throw new Error('レシピデータの送信に失敗しました');
+      }
       alert('アップロード成功！');
     }
   };
@@ -152,7 +159,7 @@ const CombinedUpload: FC = () => {
                 ))}
               </ul>
               <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
-              <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process}</p>
+              <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process.join(', ')}</p>
             </div>  
             <button
               className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
@@ -162,10 +169,10 @@ const CombinedUpload: FC = () => {
               {isUploading ? 'アップロード中...' : 'アップロード'}
             </button>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export default CombinedUpload;
+          )}
+          </div>
+          </div>
+          );
+          }
+          
+          export default CombinedUpload;
