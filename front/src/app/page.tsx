@@ -3,12 +3,14 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // 修正箇所
 import Image from 'next/image';
 import Login from '@/components/Login';
 import Logout from '@/components/Logout';
 
 export default function Home() {
 	const { data: session, status } = useSession();
+	const router = useRouter();
 
 	useEffect(() => {
 		if (status === 'authenticated' && session?.user) {
@@ -18,12 +20,13 @@ export default function Home() {
 			})
 			.then((response: AxiosResponse) => {
 				console.log('User authenticated:', response.data);
+				router.push('/with_login/about'); // ログイン後に遷移
 			})
 			.catch((error: unknown) => {
 				console.error('Error during authentication:', error);
 			});
 		}
-	}, [status, session]);
+	}, [status, session, router]);
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-fixed" style={{backgroundImage:'url(/images/title.png)'}}>
