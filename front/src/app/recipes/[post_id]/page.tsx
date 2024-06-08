@@ -42,7 +42,19 @@ const Page: FC<PageProps> = ({ params }) => {
       post_id: {params.post_id}<br />
       {recipe && (
         <div>
-          <pre>{JSON.stringify(recipe, null, 2)}</pre>
+          <h2>{recipe.details.recipe_name}</h2>
+          <h3>材料:</h3>
+          <ul>
+            {Object.entries(recipe.details.ingredients).map(([ingredient, amount]) => (
+              <li key={ingredient}>{ingredient}: {amount}</li>
+            ))}
+          </ul>
+          <h3>調理法:</h3>
+          <ol>
+            {recipe.details.cooking_process.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
         </div>
       )}
     </div>
