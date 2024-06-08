@@ -94,12 +94,13 @@ const CombinedUpload: FC = () => {
 
     const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
     if (responseData) {
-
-      console.log(recipeData);
+      console.log("post_id", responseData);
+      console.log("post_id", responseData.id);
+      console.log(recipeData);  
       console.log(JSON.stringify(recipeData, null, 2));
-
+      const post_id = responseData.id;
       // recipeデータをjson形式に変換した後、APIに送信
-      const jsonResponse = await fetch('http://localhost:8080/recipes?post_id=1', {
+      const jsonResponse = await fetch(`http://localhost:8080/recipes?post_id=${post_id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
