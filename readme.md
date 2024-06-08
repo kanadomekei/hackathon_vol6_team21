@@ -2,9 +2,9 @@
 # Chef's AI
  料理に特化したSNSサイトです。<br >
  普段の料理や自慢の料理を画像で共有できます。 <br >
- 画像から料理の原材料やレシピを提案することもできます。
- <img width="1400" alt="スクリーンショット 2024-06-09" src="https://user-images.githubusercontent.com/60876388/81193748-c51d9b00-8ff6-11ea-9981-46789f016300.png">
- <img width="350" height="700" src= "https://user-images.githubusercontent.com/60876388/81476543-643bd000-924d-11ea-9d26-cac305ca9f91.jpeg">
+ 画像から料理の原材料やレシピを提案することもできます。<br >
+ <img width="300" alt="スクリーンショット 2024-06-09" src="https://github.com/kanadomekei/hackathon_vol6_team21/blob/yamagami/image/e1d7e100-9536-4821-b1e1-4fa152681144-x16.png?raw=true"><br >
+ 
 
 # URL
 http://the-view.work/ <br >
