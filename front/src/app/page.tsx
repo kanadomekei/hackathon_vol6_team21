@@ -1,6 +1,10 @@
 "use client";
-import ImageGallery from "@/components/ImageGallery"
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import ImageGallery from "@/components/ImageGallery";
+import Modal from '@/components/Modal';
+import FloatingButton from '@/components/FloatingButton';
+import Sidebar from '@/components/Sidebar';
 
 interface Post {
   user_id: number;
@@ -11,14 +15,25 @@ interface Post {
 }
 
 export default function Component() {
+  const { data: session, status } = useSession();
+  const [images, setImages] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const [images, setImages] = useState([]);
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
   useEffect(() => {
-    fetch('http://localhost:8080/posts')
-      .then(response => response.json())
-      .then(data => setImages(data.map((item: Post) => item.image_url)))
-      .catch(error => console.error('Error fetching data:', error));
+    const fetchImages = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/posts');
+        const data: Post[] = await response.json();
+        setImages(data.map((item: Post) => item.image_url));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchImages();
   }, []);
 
   const handleUpload = () => {
@@ -28,7 +43,12 @@ export default function Component() {
 
   return (
     <div className="flex relative">
-      <ImageGallery images={images} />
+      <Sidebar />
+      <div className="ml-64"> {/* Sidebarの幅に合わせてマージンを追加 */}
+        <ImageGallery images={images} />
+        <FloatingButton handleOpen={handleOpen} />
+        <Modal isOpen={isOpen} handleClose={handleClose} />
+      </div>
     </div>
-  )
+  );
 }

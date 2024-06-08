@@ -3,7 +3,7 @@
  料理に特化したSNSサイトです。<br >
  普段の料理や自慢の料理を画像で共有できます。 <br >
  画像から料理の原材料やレシピを提案することもできます。<br >
- <img width="300" alt="スクリーンショット 2024-06-09" src="https://github.com/kanadomekei/hackathon_vol6_team21/blob/yamagami/image/e1d7e100-9536-4821-b1e1-4fa152681144-x16.png?raw=true"><br >
+ <img width="300" alt="スクリーンショット 2024-06-09" src="image/icon.png"><br >
  
 
 # URL
@@ -37,7 +37,7 @@ http://hackathon-vol6-team21.com/ <br >
 - google認証
 
 # インフラ構成図
-<img width="995" alt="スクリーンショット 2024-06-09" src="https://user-images.githubusercontent.com/60876388/81247155-3ccde300-9054-11ea-91eb-d06eb38a63b3.png">
+<img width="995" alt="スクリーンショット 2024-06-09" src="image/infra.png">
 
 ## CircleCi CI/CD
 - Githubへのpush時に、RspecとRubocopが自動で実行されます。
