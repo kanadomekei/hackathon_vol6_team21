@@ -6,6 +6,7 @@ const Upload: FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState<any | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const userId = 1; 
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -28,7 +29,7 @@ const Upload: FC = () => {
     setIsUploading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/posts?user_id=1&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E', {
+      const response = await fetch(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, {
         method: 'POST',
         body: formData,
         headers: {
