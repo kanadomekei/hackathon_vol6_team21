@@ -23,6 +23,10 @@ def read_likes_count(post_id: int, db: Session = Depends(get_db)):
 
 @router.post("/likes")
 def create_like(post_id: int, user_id: int, db: Session = Depends(get_db)):
+    existing_like = db.query(Like).filter(Like.post_id == post_id, Like.user_id == user_id).first()
+    if existing_like:
+        raise HTTPException(status_code=400, detail="User has already liked this post")
+
     db_like = Like(post_id=post_id, user_id=user_id)
     db.add(db_like)
     db.commit()
