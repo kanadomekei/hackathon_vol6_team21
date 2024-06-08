@@ -1,11 +1,6 @@
 "use client";
 import { useEffect, useState, FC} from 'react';
 
-// interface Recipe {
-//   ingredients: string;
-//   instructions: string;
-// }
-
 export default function Page({
   params,
 }: {
@@ -16,30 +11,22 @@ export default function Page({
   const [ingredients, setIngredients] = useState("");
   const [instructions, setInstructions] = useState("");
 
-  
   useEffect(() => {
-    fetch(`http://localhost:8080/recipes/by_post/${params.post_id}`)
-      .then(response => {
-        // console.log("by_post_data")
-        // console.log(`http://localhost:8080/recipes/by_post/${params.post_id}`);
-        response.json();
-        // console.log(response);
+    fetch(`http://localhost:8080/recipes/by_post/${params.post_id}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
       }
-        )
-
-      .then(data => {
-        // setIngredients(data.ingredients);
-        // setInstructions(data.instructions);
-        console.log("data");
-        console.log(data);
-        // console.log(data.ingredients);
-        // console.log(ingredients);
-        // console.log(response.id);
-        // console.log(data.post_id);
-        // console.log(params.post_id);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data); // コンソールログでデータを出力
+      setRecipeid(data.id);
+      setIngredients(data.ingredients);
+      setInstructions(data.instructions);
+    })
+    .catch(error => console.error('Error fetching recipe:', error));
+  }, [params.post_id]);
 
   return (
     <>
