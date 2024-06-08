@@ -1,6 +1,8 @@
 "use client";
 import ImageGallery from "@/components/ImageGallery"
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FC} from 'react';
+import Modal from '@/components/Modal';
+import FloatingButton from '@/components/FloatingButton';
 
 interface Post {
   user_id: number;
@@ -13,6 +15,16 @@ interface Post {
 export default function Component() {
 
   const [images, setImages] = useState([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
 
   useEffect(() => {
     fetch('http://localhost:8080/posts')
@@ -29,6 +41,8 @@ export default function Component() {
   return (
     <div className="flex relative">
       <ImageGallery images={images} />
+      <FloatingButton handleOpen={handleOpen} />
+      <Modal isOpen={isOpen} handleClose={handleClose} />
     </div>
   )
 }
