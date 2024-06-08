@@ -44,3 +44,10 @@ def delete_recipe(recipe_id: int, db: Session = Depends(get_db)):
     db.delete(db_recipe)
     db.commit()
     return {"message": f"Recipe {recipe_id} deleted"}
+
+@router.get("/recipes/by_post/{post_id}")
+def read_recipe_by_post_id(post_id: int, db: Session = Depends(get_db)):
+    db_recipe = db.query(Recipe).filter(Recipe.post_id == post_id).first()
+    if db_recipe is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+    return db_recipe
