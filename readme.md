@@ -7,7 +7,7 @@
  
 
 # URL
-http://the-view.work/ <br >
+http://hackathon-vol6-team21.com/ <br >
 画面中部のログインボタンから、google認証を使ってログインできます。
 
 # 使用技術
