@@ -1,5 +1,5 @@
 name: Deployment
-
+ 
 on:
   push:
     branches:
@@ -7,16 +7,43 @@ on:
   workflow_dispatch:
  
 jobs:
- build:
-   runs-on: ubuntu-latest
-   steps:
-     - name: Copy Environment
-       run: |
-         scp -oStrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p ${{ secrets.USER_NAME }}@${{ secrets.BASTION_HOST_NAME }} -i private_key" -i private_key ${{ secrets.ENV }} ${{ secrets.USER_NAME }}@${{ secrets.HOST_NAME }}:~/${{ secrets.REPOSITORY_DIR }}
+  deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-     - name: Deploy
-       run: |
-         echo "${{ secrets.PRIVATE_KEY }}" > env
-         echo "${{ secrets.PRIVATE_KEY }}" > private_key
-         chmod 600 private_key
-         ssh -oStrictHostKeyChecking=no -oProxyCommand="ssh -W %h:%p ${{ secrets.USER_NAME }}@${{ secrets.BASTION_HOST_NAME }} -i private_key" ${{ secrets.USER_NAME }}@${{ secrets.HOST_NAME }} -i private_key
+      - name: Preparation
+        run: |
+          echo "${{ secrets.ENV }}" > .env
+
+      - name: Copy env File
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.WEB_HOST_NAME }}
+          username: ${{ secrets.WEB_USER_NAME }}
+          key: ${{ secrets.WEB_PRIVATE_KEY }}
+          proxy_host: ${{ secrets.BASTION_HOST_NAME }}
+          proxy_username: ${{ secrets.BASTION_USER_NAME }}
+          proxy_key: ${{ secrets.BASTION_PRIVATE_KEY }}
+          source: ".env"
+          target: ~/hackathon_vol6_team21/
+ 
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.WEB_HOST_NAME }}
+          username: ${{ secrets.WEB_USER_NAME }}
+          key: ${{ secrets.WEB_PRIVATE_KEY }}
+          proxy_host: ${{ secrets.BASTION_HOST_NAME }}
+          proxy_username: ${{ secrets.BASTION_USER_NAME }}
+          proxy_key: ${{ secrets.BASTION_PRIVATE_KEY }}
+          script: |
+            cd hackathon_vol6_team21
+            docker compose down
+            git pull
+            cd front
+            npm install
+            cd ..
+            docker compose up --build -d
