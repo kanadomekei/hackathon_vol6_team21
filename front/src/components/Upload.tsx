@@ -1,4 +1,3 @@
-// リファクタリング前のコードをそのままリファクタリングする
 import React, { FC, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -48,6 +47,20 @@ const CombinedUpload: FC = () => {
     }
   };
 
+  const fetchUserId = async (email: string) => {
+    try {
+      const response = await fetch(`http://localhost:8080/users/by-email/${encodeURIComponent(email)}`);
+      if (!response.ok) {
+        throw new Error('ユーザーIDの取得に失敗しました');
+      }
+      const data = await response.json();
+      return data.user_id;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
+  };
+
   const handleUploadRecipe = async () => {
     if (!file) {
       alert('ファイルを選択してください');
@@ -66,32 +79,24 @@ const CombinedUpload: FC = () => {
       alert('ファイルまたはレシピデータがありません');
       return;
     }
+
     const email = session?.user?.email;
-    let userId; 
-  
-    if (email) {
-      try {
-        const response = await fetch(`http://localhost:8080/users/by-email/${encodeURIComponent(email)}`);
-        if (!response.ok) {
-          throw new Error('ユーザーIDの取得に失敗しました');
-        }
-        const data = await response.json();
-        userId = data.user_id; // userIdを取得
-        console.log('userId:', userId);
-      } catch (error) {
-        console.error('Error:', error);
-      }
+    const userId = email ? await fetchUserId(email) : null;
+    console.log(userId);
+    if (!userId) {
+      alert('ユーザーIDの取得に失敗しました');
+      return;
     }
-  
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('caption', recipeData.recipe_name);
-  
+
     const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
     if (responseData) {
       const ingredients = Object.entries(recipeData.ingredients).map(([key, value]) => `${key}: ${value}`).join(' ');
       const instructions = recipeData.cooking_process.join(' ');
-  
+
       await uploadData(`http://localhost:8080/recipes?post_id=${responseData.post_id}&ingredients=` + encodeURIComponent(ingredients) + '&instructions=' + encodeURIComponent(instructions), new FormData(), 'レシピのアップロードに失敗しました');
       alert('アップロード成功！');
     }
@@ -152,6 +157,7 @@ const CombinedUpload: FC = () => {
             <button
               className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
               onClick={handleFinalUpload}
+              disabled={isUploading}
             >
               {isUploading ? 'アップロード中...' : 'アップロード'}
             </button>
