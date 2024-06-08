@@ -22,6 +22,7 @@ const Upload: FC = () => {
     }
 
     const formData = new FormData();
+
     formData.append('file', file);
 
     setIsUploading(true);
@@ -33,6 +34,7 @@ const Upload: FC = () => {
         headers: {
           'accept': 'application/json',
         },
+
       });
 
       if (!response.ok) {
@@ -40,7 +42,9 @@ const Upload: FC = () => {
       }
 
       const data = await response.json();
+
       console.log('API Response:', data);
+
       setRecipeData(data);
     } catch (error) {
       console.error('Error:', error);
@@ -94,12 +98,14 @@ const Upload: FC = () => {
             <h3 className="text-lg font-semibold mb-2">材料:</h3>
             <ul className="list-disc list-inside mb-4">
               {recipeData.ingredients?.map((ingredient: { name: string, quantity: string }) => (
+
                 <li key={ingredient.name}>{ingredient.name}: {ingredient.quantity}</li>
               ))}
             </ul>
             <h3 className="text-lg font-semibold mb-2">調理工程:</h3>
             <ol className="list-decimal list-inside">
               {recipeData.cooking_process?.map((step: string, index: number) => (
+
                 <li key={index}>{step}</li>
               ))}
             </ol>
@@ -114,3 +120,5 @@ const Upload: FC = () => {
 };
 
 export default Upload;
+
+
