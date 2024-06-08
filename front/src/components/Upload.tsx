@@ -1,7 +1,7 @@
+// リファクタリング前のコードをそのままリファクタリングする
 import React, { FC, useState } from 'react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import Email from 'next-auth/providers/email';
 
 interface RecipeData {
   recipe_name: string;
@@ -10,7 +10,7 @@ interface RecipeData {
 }
 
 const CombinedUpload: FC = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
@@ -67,8 +67,8 @@ const CombinedUpload: FC = () => {
       return;
     }
     const email = session?.user?.email;
-    console.log('email', email);
-
+    let userId; 
+  
     if (email) {
       try {
         const response = await fetch(`http://localhost:8080/users/by-email/${encodeURIComponent(email)}`);
@@ -76,15 +76,13 @@ const CombinedUpload: FC = () => {
           throw new Error('ユーザーIDの取得に失敗しました');
         }
         const data = await response.json();
-        const userId = data.user_id;
-        console.log('user_id', userId);
-        
-        // userIdを使って他の処理を続ける
+        userId = data.user_id; // userIdを取得
+        console.log('userId:', userId);
       } catch (error) {
         console.error('Error:', error);
       }
     }
-    const userId = 1;
+  
     const formData = new FormData();
     formData.append('file', file);
     formData.append('caption', recipeData.recipe_name);
@@ -152,19 +150,16 @@ const CombinedUpload: FC = () => {
               <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process}</p>
             </div>  
             <button
-                            className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
-                            onClick={handleFinalUpload}
-                          >
-                            {isUploading ? '最終アップロード中...' : '最終アップロード'}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                    <style jsx global>{`
-                      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-                    `}</style>
-                  </div>
-                );
-              };
-              
-              export default CombinedUpload;
+              className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
+              onClick={handleFinalUpload}
+            >
+              {isUploading ? 'アップロード中...' : 'アップロード'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CombinedUpload;
