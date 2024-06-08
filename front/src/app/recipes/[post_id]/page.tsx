@@ -18,24 +18,26 @@ export default function Page({
 
   
   useEffect(() => {
-    fetch(`http://localhost:8080/recipes_by_post/${params.post_id}`)
+    fetch(`http://localhost:8080/recipes/by_post/${params.post_id}`)
       .then(response => {
+        // console.log("by_post_data")
+        // console.log(`http://localhost:8080/recipes/by_post/${params.post_id}`);
         response.json();
-        console.log(response);
+        // console.log(response);
       }
         )
 
-      // .then(data => {
-      //   // setIngredients(data.ingredients);
-      //   // setInstructions(data.instructions);
-      //   console.log(data);
-      //   console.log("data");
-      //   console.log(data.ingredients);
-      //   console.log(ingredients);
-      //   console.log(response.id);
-      //   console.log(data.post_id);
-      //   console.log(params.post_id);
-      // })
+      .then(data => {
+        // setIngredients(data.ingredients);
+        // setInstructions(data.instructions);
+        console.log("data");
+        console.log(data);
+        // console.log(data.ingredients);
+        // console.log(ingredients);
+        // console.log(response.id);
+        // console.log(data.post_id);
+        // console.log(params.post_id);
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
