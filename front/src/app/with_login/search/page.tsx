@@ -113,7 +113,7 @@ const CombinedUpload: FC = () => {
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen bg-no-repeat bg-cover"
-      style={{ backgroundImage: `url(/images/orangeback.jpg)` }}
+      style={{ backgroundImage: `url(/images/orange.png)` }}
     >
     <div className="flex flex-col items-center justify-center bg-[#fafafa]">
       <div className="w-full max-w-[500px] bg-white shadow-md rounded-lg p-8">

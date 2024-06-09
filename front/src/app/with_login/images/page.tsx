@@ -43,7 +43,7 @@ export default function Component() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen bg-no-repeat bg-cover"
+      className="flex flex-col items-center justify-center bg-white bg-opacity-75 min-h-screen bg-no-repeat bg-cover"
       style={{ backgroundImage: `url(/images/orangeback.jpg)` }}
     >
     <div className="flex relative">

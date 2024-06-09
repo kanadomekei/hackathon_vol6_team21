@@ -27,7 +27,6 @@ const Modal: FC<ModalProps> = ({ isOpen, handleClose }) => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg" ref={modalRef}>
             <span className="close cursor-pointer text-black" onClick={handleClose}>&times;</span>
-            <h2 className="text-xl font-bold mb-4">モーダルウィンドウ</h2>
             <Upload />
           </div>
         </div>
