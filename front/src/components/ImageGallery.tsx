@@ -17,9 +17,40 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
 
   useEffect(() => {
     if (currentIndex !== null) {
+      fetchLikeData(currentIndex);
       fetchLikeCount(currentIndex);
     }
   }, [currentIndex]);
+
+  const fetchLikeData = async (index: number) => {
+    try {
+      const email = session?.user?.email;
+      console.log("email", email);
+      const userId = email ? await fetchUserId(email) : null;
+      console.log("userId", userId);
+
+      const response = await fetch(`http://localhost:8080/likes/${index+1}/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if(data.islike){
+        setLikeIds(prevCounts => {
+          const newCounts = [...prevCounts];
+          newCounts[index] = data.id;
+          return newCounts;
+        });
+        setIsLiked((prevLikedImages) => {
+          const newLikedImages = [...prevLikedImages];
+          newLikedImages[index] = true;
+          return newLikedImages;
+        });
+
+      }} else {
+        console.error(`Failed to fetch like count for index ${index}`);
+      }
+    } catch (error) {
+      console.error(`Error fetching like count for index ${index}:`, error);
+    }
+  }
 
   const fetchUserId = async (email: string) => {
     try {
