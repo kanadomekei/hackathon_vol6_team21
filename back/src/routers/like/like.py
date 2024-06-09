@@ -21,6 +21,15 @@ def read_likes_count(post_id: int, db: Session = Depends(get_db)):
     likes_count = len(likes)
     return {"likes_count": likes_count}
 
+@router.get("/islike/{post_id}")
+def islike(post_id: int, user_id: int, db: Session = Depends(get_db)):
+    existing_like = db.query(Like).filter(Like.post_id == post_id, Like.user_id == user_id).first()
+    if(existing_like):
+        return {"islike": True}
+    else:
+        return {"islike": False}
+
+
 @router.post("/likes")
 def create_like(post_id: int, user_id: int, db: Session = Depends(get_db)):
     existing_like = db.query(Like).filter(Like.post_id == post_id, Like.user_id == user_id).first()
