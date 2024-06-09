@@ -121,38 +121,38 @@ const CombinedUpload: FC = () => {
           {isUploading ? 'レシピ生成中...' : 'レシピ生成'}
         </button>
         {recipeDataList.length > 0 && (
-  <div className="w-full mt-6">
-    {recipeDataList.map((recipeData, index) => (
-      <div key={index} className="mb-6 flex w-[160%]">
-        <div className="w-1/2 pr-4">
-          <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
-          <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
-          <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
-          <ul className="list-disc pl-5">
-            {Object.entries(recipeData.ingredients).map(([ingredient, quantity]) => (
-              <li key={ingredient} className="text-lg text-gray-900">{`${ingredient}: ${quantity}`}</li>
+          <div className="w-full mt-6">
+            {recipeDataList.map((recipeData, index) => (
+              <div key={index} className="mb-6 flex flex-col w-full">
+                <div className="flex justify-center mb-4">
+                  <Image
+                    src={recipeData.image_url}
+                    alt="Selected preview"
+                    width={300}
+                    height={300}
+                    className="object-cover rounded-lg"
+                  />
+                </div>
+                <div className="w-full">
+                  <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
+                  <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
+                  <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
+                  <ul className="list-disc pl-5">
+                    {Object.entries(recipeData.ingredients).map(([ingredient, quantity]) => (
+                      <li key={ingredient} className="text-lg text-gray-900">{`${ingredient}: ${quantity}`}</li>
+                    ))}
+                  </ul>
+                  <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
+                  <ul className="list-disc pl-5">
+                    {recipeData.cooking_process.map((step, index) => (
+                      <li key={index} className="text-lg text-gray-900">{step}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             ))}
-          </ul>
-          <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
-          <ul className="list-disc pl-5 w-[130%]"> {/* 幅を1.3倍に設定 */}
-            {recipeData.cooking_process.map((step, index) => (
-              <li key={index} className="text-lg text-gray-900">{step}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="w-1/2">
-          <Image
-            src={recipeData.image_url}
-            alt="Selected preview"
-            width={300}
-            height={300}
-            className="object-cover rounded-lg"
-          />
-        </div>
-      </div>
-    ))}
-  </div>
-)}
+          </div>
+        )}
       </div>
     </div>
   );
