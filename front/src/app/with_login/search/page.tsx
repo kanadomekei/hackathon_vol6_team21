@@ -83,7 +83,12 @@ const CombinedUpload: FC = () => {
   };
 
   return (
+    <div
+      className="flex flex-col items-center justify-center min-h-screen bg-no-repeat bg-cover"
+      style={{ backgroundImage: `url(/images/orangeback.jpg)` }}
+    >
     <div className="flex flex-col items-center justify-center bg-[#fafafa]">
+      <title>chef's AI | Search</title>
       <div className="w-full max-w-[900px] bg-white shadow-md rounded-lg p-8">
         <h1 className="text-2xl font-bold text-center mb-6 font-roboto">
           料理の画像をアップロードして原材料と調理工程を知る
@@ -152,6 +157,7 @@ const CombinedUpload: FC = () => {
               </div>
             ))}
           </div>
+
         )}
       </div>
     </div>
@@ -159,4 +165,3 @@ const CombinedUpload: FC = () => {
 }
 
 export default CombinedUpload;
-

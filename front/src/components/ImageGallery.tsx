@@ -172,8 +172,12 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
   };
 
   return (
+    
     <div>
-      <div className="flex flex-wrap justify-start p-6 bg-white min-h-screen ml-64">
+      <div
+      className="flex flex-col items-center justify-center min-h-screen bg-no-repeat bg-cover"
+    >
+      <div className="flex flex-wrap justify-start p-6 bg-white bg-opacity-75 min-h-screen ml-64">
         {images.map((src, index) => (
           <div key={index} className="p-2">
             <div className="relative w-48 h-48">
@@ -242,6 +246,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

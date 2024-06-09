@@ -42,14 +42,19 @@ export default function Component() {
   };
 
   return (
+    <div
+      className="flex flex-col items-center justify-center min-h-screen bg-no-repeat bg-cover"
+      style={{ backgroundImage: `url(/images/orangeback.jpg)` }}
+    >
     <div className="flex relative">
-      <title>images</title>
+      <title>chef's AI | Images</title>
       <Sidebar />
       <div className="ml-64"> {/* Sidebarの幅に合わせてマージンを追加 */}
         <ImageGallery images={images} />
         <FloatingButton handleOpen={handleOpen} />
         <Modal isOpen={isOpen} handleClose={handleClose} />
       </div>
+    </div>
     </div>
   );
 }
