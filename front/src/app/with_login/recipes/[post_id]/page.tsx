@@ -52,8 +52,6 @@ const Page: FC<PageProps> = ({ params }) => {
           },
         });
         const data = await response.json();
-        console.log(response);
-        console.log(data);
         setPost(data);
       } catch (error) {
         console.error('Error fetching recipe:', error);
