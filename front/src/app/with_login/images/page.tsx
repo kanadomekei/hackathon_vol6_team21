@@ -42,6 +42,10 @@ export default function Component() {
   };
 
   return (
+    <div
+      className="flex flex-col items-center justify-center min-h-screen bg-no-repeat bg-cover"
+      style={{ backgroundImage: `url(/images/orangeback.jpg)` }}
+    >
     <div className="flex relative">
       <title>images</title>
       <Sidebar />
@@ -50,6 +54,7 @@ export default function Component() {
         <FloatingButton handleOpen={handleOpen} />
         <Modal isOpen={isOpen} handleClose={handleClose} />
       </div>
+    </div>
     </div>
   );
 }
