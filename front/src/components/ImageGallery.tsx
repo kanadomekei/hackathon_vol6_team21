@@ -32,12 +32,19 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
       const response = await fetch(`http://localhost:8080/likes/${index+1}/${userId}`);
       if (response.ok) {
         const data = await response.json();
+        if(data.islike){
         setLikeIds(prevCounts => {
           const newCounts = [...prevCounts];
           newCounts[index] = data.id;
           return newCounts;
         });
-      } else {
+        setIsLiked((prevLikedImages) => {
+          const newLikedImages = [...prevLikedImages];
+          newLikedImages[index] = true;
+          return newLikedImages;
+        });
+
+      }} else {
         console.error(`Failed to fetch like count for index ${index}`);
       }
     } catch (error) {
