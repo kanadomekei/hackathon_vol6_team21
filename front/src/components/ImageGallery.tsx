@@ -15,28 +15,27 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
   const userId = 3; // ユーザーIDをハードコードしていますが、実際には適切な値を取得してください
 
   useEffect(() => {
-    fetchAllLikeData();
-  }, []);
+    if (currentIndex !== null) {
+      fetchLikeData(currentIndex);
+      fetchLikeCount(currentIndex);
+    }
+  }, [currentIndex]);
 
-  const fetchAllLikeData = async () => {
+  const fetchLikeData = async (index: number) => {
     try {
-      const responses = await Promise.all(images.map((_, index) => fetch(`http://localhost:8080/likes/${index+1}`)));
-      const data = await Promise.all(responses.map(res => res.json()));
-      const newLikedImages = [...isLiked];
-      const newLikeCounts = [...likeCounts];
-      const newLikeIds = [...likeIds];
-
-      data.forEach((item, index) => {
-        newLikedImages[index] = item.user_id === userId;
-        newLikeCounts[index] = item.likes_count;
-        newLikeIds[index] = item.user_id === userId ? item.like_id : null;
-      });
-      
-      setIsLiked(newLikedImages);
-      setLikeCounts(newLikeCounts);
-      setLikeIds(newLikeIds);
+      const response = await fetch(`http://localhost:8080/likes/${index+1}/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setLikeIds(prevCounts => {
+          const newCounts = [...prevCounts];
+          newCounts[index] = data.likes_Ids;
+          return newCounts;
+        });
+      } else {
+        console.error(`Failed to fetch like count for index ${index}`);
+      }
     } catch (error) {
-      console.error('Error fetching like data:', error);
+      console.error(`Error fetching like count for index ${index}:`, error);
     }
   };
 
