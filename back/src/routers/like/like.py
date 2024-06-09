@@ -21,11 +21,11 @@ def read_likes_count(post_id: int, db: Session = Depends(get_db)):
     likes_count = len(likes)
     return {"likes_count": likes_count}
 
-@router.get("/islike/{post_id}")
-def islike(post_id: int, user_id: int, db: Session = Depends(get_db)):
+@router.get("/likes/{post_id}/{user_id}")
+def read_like_by_user_id(post_id: int, user_id: int, db: Session = Depends(get_db)):
     existing_like = db.query(Like).filter(Like.post_id == post_id, Like.user_id == user_id).first()
     if(existing_like):
-        return {"islike": True}
+        return {"islike": True, "id": existing_like.id}
     else:
         return {"islike": False}
 
