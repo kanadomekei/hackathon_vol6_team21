@@ -12,12 +12,33 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
   const [isLiked, setIsLiked] = useState<boolean[]>(Array(images.length).fill(false));
   const [likeCounts, setLikeCounts] = useState<number[]>(Array(images.length).fill(0));
   const [likeIds, setLikeIds] = useState<(number | null)[]>(Array(images.length).fill(null));
+  const userId = 3; // ユーザーIDをハードコードしていますが、実際には適切な値を取得してください
 
   useEffect(() => {
-    if (currentIndex !== null) {
-      fetchLikeCount(currentIndex);
+    fetchAllLikeData();
+  }, []);
+
+  const fetchAllLikeData = async () => {
+    try {
+      const responses = await Promise.all(images.map((_, index) => fetch(`http://localhost:8080/likes/${index+1}`)));
+      const data = await Promise.all(responses.map(res => res.json()));
+      const newLikedImages = [...isLiked];
+      const newLikeCounts = [...likeCounts];
+      const newLikeIds = [...likeIds];
+
+      data.forEach((item, index) => {
+        newLikedImages[index] = item.user_id === userId;
+        newLikeCounts[index] = item.likes_count;
+        newLikeIds[index] = item.user_id === userId ? item.like_id : null;
+      });
+      
+      setIsLiked(newLikedImages);
+      setLikeCounts(newLikeCounts);
+      setLikeIds(newLikeIds);
+    } catch (error) {
+      console.error('Error fetching like data:', error);
     }
-  }, [currentIndex]);
+  };
 
   const fetchLikeCount = async (index: number) => {
     try {
@@ -39,7 +60,6 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
 
   const toggleLikeImage = async (e: React.MouseEvent, index: number) => {
     e.stopPropagation();
-    const userId = 3; // ユーザーIDをハードコードしていますが、実際には適切な値を取得してください
 
     try {
       if (isLiked[index]) {

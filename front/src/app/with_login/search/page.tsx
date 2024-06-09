@@ -1,105 +1,70 @@
 "use client";
-import React from "react";
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import Modal from '@/components/Modal';
+import FloatingButton from '@/components/FloatingButton';
+import Sidebar from '@/components/Sidebar';
 
-function MainComponent() {
+interface Post {
+  user_id: number;
+  image_url: string;
+  created_at: string;
+  caption: string;
+  id: number;
+}
 
-        const [file, setFile] = useState(null);
-        const [response, setResponse] = useState(null);
-          
-        const handleFileChange = (event) => {
-              setFile(event.target.files[0]);
-            };
-          
-        const handleSubmit = async (event) => {
-              event.preventDefault();
-              if (!file) return;
-          
-              const formData = new FormData();
-              formData.append('img', file);
+export default function Component() {
+  const { data: session, status } = useSession();
+  const [images, setImages] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    try {
-      const res = await fetch('http://localhost:8080/ai/create_recipe', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json();
-      console.log(data)
-      setResponse(data);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-    }
-   }
-  
-  
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/posts');
+        const data: Post[] = await response.json();
+        setImages(data.map((item: Post) => item.image_url));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchImages();
+  }, []);
+
+  const handleUpload = () => {
+    // 画像アップロードのロジックをここに追加
+    console.log("画像アップロードボタンがクリックされました");
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <form onSubmit={handleSubmit} className="flex flex-col items-center">
-        <input type="file" onChange={handleFileChange} className="mb-4" />
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
-          アップロード
-        </button>
-      </form>
-      {response && (
-        <div className="mt-4">
-          <p>{response.recipe_name}</p>
-        </div>
-      )}
+    <div className="flex relative">
+      <Sidebar />
+      <div className="ml-64"> {/* Sidebarの幅に合わせてマージンを追加 */}
+       <div className="flex flex-wrap justify-start p-6 bg-white min-h-screen ml-64">
+        <FloatingButton handleOpen={handleOpen} />
+        <Modal isOpen={isOpen} handleClose={handleClose} />
+        {/* {recipeData && (
+          <div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
+              <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
+              <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
+              <ul className="list-disc pl-5">
+                {Object.entries(recipeData.ingredients).map(([ingredient, quantity]) => (
+                  <li key={ingredient} className="text-lg text-gray-900">{`${ingredient}: ${quantity}`}</li>
+                ))}
+              </ul>
+              <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
+              <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process.join(', ')}</p>
+            </div>  
+           </div>
+          )} */}
+          </div>
+      </div>
     </div>
   );
-  };
-  export default MainComponent;
-
-//   return (
-//     <div className="flex flex-col items-center p-4">
-//       <img
-//         src="./images/saba.png"
-//         alt="Grilled mackerel dish"
-//         className="w-[300px] h-[200px] mb-4"
-//       />
-
-//       <div className="w-full max-w-[600px]">
-//         <h2 className="font-bold text-lg mb-2">材料 (1人前)</h2>
-//         <div className="border rounded p-2 mb-4">
-//           <div className="flex justify-between mb-2">
-//             <span className="font-medium">サバ (200g)</span>
-//             <span className="font-medium">1切れ</span>
-//           </div>
-//           <div className="flex justify-between mb-2">
-//             <span className="font-medium">料理酒</span>
-//             <span className="font-medium">大さじ2</span>
-//           </div>
-//           <div className="flex justify-between mb-2">
-//             <span className="font-medium">塩</span>
-//             <span className="font-medium">少々</span>
-//           </div>
-//           <div className="flex justify-between mb-2">
-//             <span className="font-medium">大葉</span>
-//             <span className="font-medium">1枚</span>
-//           </div>
-//           <div className="flex justify-between">
-//             <span className="font-medium">大根おろし</span>
-//             <span className="font-medium">適量</span>
-//           </div>
-//         </div>
-
-//         <h2 className="font-bold text-lg mb-2">作り方</h2>
-//         <ol className="list-decimal pl-6">
-//           <li className="mb-2">
-//             サバは半分に切ります。1切れは十字に切り込みを入れ、残りは約3cmに2本の切り込みを入れます。
-//           </li>
-//           <li className="mb-2">
-//             料理酒をかけて5分ほど置き、キッチンペーパーで水気を拭き取ります。
-//           </li>
-//           <li className="mb-2">
-//             アルミホイルを敷いた天板に皮目を上にしてのせ、塩をふり、オーブントースターで10分ほど焼きます。
-//           </li>
-//           <li className="mb-2">
-//             焼き目が付いたら、中央まで火が通ったら、大葉を敷いたお皿に盛り付け、大根おろしを添えて完成です。
-//           </li>
-//         </ol>
-//       </div>
-//     </div>
-//   );
-
-
+}

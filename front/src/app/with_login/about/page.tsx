@@ -13,7 +13,7 @@ function MainComponent() {
             Chef's AIの使用方法
             </h2>
             <section className="mb-8">
-            <h3 className="text-4xl font-roboto text-[#000000] mb-2">・home</h3>
+            <h3 className="text-4xl font-roboto text-[#000000] mb-2">~images~</h3>
             <p className="text-lg font-roboto text-[#000000]">
                 ここでは画像を投稿して料理をシェアできます！
             </p>
@@ -27,7 +27,7 @@ function MainComponent() {
 
             <div className="flex flex-col items-center mb-8">
             <img
-            src="./images/modal.png"
+            src="/images/modal.png"
             alt="how to modal"
             className="w-[500px] h-[500px] mb-4"
             />
@@ -35,7 +35,7 @@ function MainComponent() {
         
 
             <section className="mb-8">
-            <h3 className="text-4xl font-roboto text-[#000000] mb-2">・search</h3>
+            <h3 className="text-4xl font-roboto text-[#000000] mb-2">~search~</h3>
             <p className="text-lg font-roboto text-[#000000]">
                 ここでは自分が持っている画像をアップロードすることでAIが自動的に料理を判断してレシピを提案してくれます!
             </p>
@@ -44,7 +44,7 @@ function MainComponent() {
             </p>
             </section>
             <section>
-            <h3 className="text-4xl font-roboto text-[#000000] mb-2">・about</h3>
+            <h3 className="text-4xl font-roboto text-[#000000] mb-2">~about~</h3>
             <p className="text-lg font-roboto text-[#000000]">
                 このページだよ！このアプリの使い方を説明しています！
             </p>
