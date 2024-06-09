@@ -17,9 +17,40 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
 
   useEffect(() => {
     if (currentIndex !== null) {
+      fetchLikeData(currentIndex);
       fetchLikeCount(currentIndex);
     }
   }, [currentIndex]);
+
+  const fetchLikeData = async (index: number) => {
+    try {
+      const email = session?.user?.email;
+      console.log("email", email);
+      const userId = email ? await fetchUserId(email) : null;
+      console.log("userId", userId);
+
+      const response = await fetch(`http://localhost:8080/likes/${index+1}/${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if(data.islike){
+        setLikeIds(prevCounts => {
+          const newCounts = [...prevCounts];
+          newCounts[index] = data.id;
+          return newCounts;
+        });
+        setIsLiked((prevLikedImages) => {
+          const newLikedImages = [...prevLikedImages];
+          newLikedImages[index] = true;
+          return newLikedImages;
+        });
+
+      }} else {
+        console.error(`Failed to fetch like count for index ${index}`);
+      }
+    } catch (error) {
+      console.error(`Error fetching like count for index ${index}:`, error);
+    }
+  }
 
   const fetchUserId = async (email: string) => {
     try {
@@ -168,7 +199,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             className="relative w-3/4 h-3/4 flex items-center justify-center" // 親要素を中央に配置するためのスタイリングを追加
           >
             <div
-              className="flex items-center justify-center" // fullの指定削除
+              className="relative flex items-center justify-center" // fullの指定削除
               onClick={(e) => e.stopPropagation()} // 追加
             >
               <Link href={`recipes/${currentIndex + 1}`}>
@@ -183,7 +214,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                 />
               </Link>
               <button
-                className={`absolute right-64 top-1/2 transform -translate-y-1/2 px-16 py-8 rounded text-white text-3xl ${isLiked[currentIndex] ? 'bg-red-500' : 'bg-gray-500'}`}
+                className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-4 px-16 py-8 rounded text-white text-3xl ${isLiked[currentIndex] ? 'bg-red-500' : 'bg-gray-500'}`}
                 onClick={(e) => toggleLikeImage(e, currentIndex)}
               >
                 {likeCounts[currentIndex]} {isLiked[currentIndex] ? 'Liked!' : 'Liked'}
