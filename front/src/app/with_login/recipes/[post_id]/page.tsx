@@ -44,16 +44,20 @@ const Page: FC<PageProps> = ({ params }) => {
       {recipe && recipe.details && (
         <div>
           <h2>{recipe.details.recipe_name}</h2>
-          <h3>材料:</h3>
-          <ul>
+          <p className="font-bold">材料</p>
+          <ul className="mt-2 divide-y divide-gray-200">
             {Object.entries(recipe.details.ingredients).map(([ingredient, amount]) => (
-              <li key={ingredient}>{ingredient}: {amount}</li>
-            ))}
+              <li className="flex justify-between py-2" key={ingredient}>
+                <span> {ingredient} </span>
+                <span> {amount} </span>
+              </li>
+              ))}
           </ul>
-          <h3>調理法:</h3>
-          <ol>
+          <br></br>
+          <p className="font-bold">調理方法</p>
+          <ol className="mt-2 divide-y divide-gray-200">
             {recipe.details.cooking_process.map((step, index) => (
-              <li key={index}>{step}</li>
+              <li className="flex justify-between py-2" key={index}>{index + 1}.{step}</li>
             ))}
           </ol>
         </div>
