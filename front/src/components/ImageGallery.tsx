@@ -1,18 +1,19 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 interface ImageGalleryProps {
   images: string[];
 }
 
 export default function ImageGallery({ images }: ImageGalleryProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [isLiked, setIsLiked] = useState<boolean[]>(Array(images.length).fill(false));
   const [likeCounts, setLikeCounts] = useState<number[]>(Array(images.length).fill(0));
   const [likeIds, setLikeIds] = useState<(number | null)[]>(Array(images.length).fill(null));
-  const userId = 3; // ユーザーIDをハードコードしていますが、実際には適切な値を取得してください
+  const [isOpen, setIsOpen] = useState<boolean>(false); // isOpenの状態を追加
 
   useEffect(() => {
     if (currentIndex !== null) {
@@ -23,12 +24,17 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
 
   const fetchLikeData = async (index: number) => {
     try {
+      const email = session?.user?.email;
+      console.log("email", email);
+      const userId = email ? await fetchUserId(email) : null;
+      console.log("userId", userId);
+
       const response = await fetch(`http://localhost:8080/likes/${index+1}/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setLikeIds(prevCounts => {
           const newCounts = [...prevCounts];
-          newCounts[index] = data.likes_Ids;
+          newCounts[index] = data.id;
           return newCounts;
         });
       } else {
@@ -37,11 +43,25 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
     } catch (error) {
       console.error(`Error fetching like count for index ${index}:`, error);
     }
+  }
+
+  const fetchUserId = async (email: string) => {
+    try {
+      const response = await fetch(`http://localhost:8080/users/by-email/${encodeURIComponent(email)}`);
+      if (!response.ok) {
+        throw new Error('ユーザーIDの取得に失敗しました');
+      }
+      const data = await response.json();
+      return data.user_id;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
   };
 
   const fetchLikeCount = async (index: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/likes/${index+1}/count`);
+      const response = await fetch(`http://localhost:8080/likes/${index + 1}/count`);
       if (response.ok) {
         const data = await response.json();
         setLikeCounts(prevCounts => {
@@ -59,6 +79,10 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
 
   const toggleLikeImage = async (e: React.MouseEvent, index: number) => {
     e.stopPropagation();
+    const email = session?.user?.email;
+    console.log("email", email);
+    const userId = email ? await fetchUserId(email) : null;
+    console.log("userId", userId);
 
     try {
       if (isLiked[index]) {
@@ -89,7 +113,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
         }
       } else {
         // いいねする
-        const response = await fetch(`http://localhost:8080/likes?post_id=${index+1}&user_id=${userId}`, {
+        const response = await fetch(`http://localhost:8080/likes?post_id=${index + 1}&user_id=${userId}`, {
           method: 'POST',
         });
 
@@ -140,7 +164,6 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
     }
   };
 
-
   return (
     <div>
       <div className="flex flex-wrap justify-start p-6 bg-white min-h-screen ml-64">
@@ -172,7 +195,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
               className="flex items-center justify-center" // fullの指定削除
               onClick={(e) => e.stopPropagation()} // 追加
             >
-              <Link href={`recipes/${currentIndex+1}`}>
+              <Link href={`recipes/${currentIndex + 1}`}>
                 <Image
                   src={images[currentIndex]}
                   alt={`Selected image ${currentIndex}`}
@@ -187,26 +210,26 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                 className={`absolute right-64 top-1/2 transform -translate-y-1/2 px-16 py-8 rounded text-white text-3xl ${isLiked[currentIndex] ? 'bg-red-500' : 'bg-gray-500'}`}
                 onClick={(e) => toggleLikeImage(e, currentIndex)}
               >
-               {likeCounts[currentIndex]} {isLiked[currentIndex] ? 'Liked!' : 'Liked'}
+                {likeCounts[currentIndex]} {isLiked[currentIndex] ? 'Liked!' : 'Liked'}
               </button>
             </div>
 
             <button
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-2xl"
-                onClick={(e) => {
-                    e.stopPropagation(); // 追加
-                    showPrevImage();
-                  }}
-              >
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 transform -translate-y-1/2 text-white text-2xl"
+              onClick={(e) => {
+                e.stopPropagation(); // 追加
+                showPrevImage();
+              }}
+            >
               &lt;
             </button>
             <button
               className="absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-2xl"
-                onClick={(e) => {
-                    e.stopPropagation(); // 追加
-                    showNextImage();
-                  }}
-              >
+              onClick={(e) => {
+                e.stopPropagation(); // 追加
+                showNextImage();
+              }}
+            >
               &gt;
             </button>
           </div>
