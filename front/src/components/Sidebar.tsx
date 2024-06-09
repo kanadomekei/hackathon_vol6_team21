@@ -21,6 +21,7 @@ export default function Sidebar() {
         <SidebarItem icon="/images/search.png" label="Search" href="/with_login/search" />
         <SidebarItem icon="/images/book.png" label="About" href="/with_login/about" />
         <SidebarItem icon="/images/camera.png" label="images" href="/with_login/images" />
+
         {session && session.user ? (
           <>
             <UserProfile name={session.user.name || ''} avatarUrl={session.user.image || ''} />

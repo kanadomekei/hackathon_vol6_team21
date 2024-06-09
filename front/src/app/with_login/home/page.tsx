@@ -20,7 +20,6 @@ export default function Home() {
 			})
 			.then((response: AxiosResponse) => {
 				console.log('User authenticated:', response.data);
-				router.push('/with_login/about'); // ログイン後に遷移
 			})
 			.catch((error: unknown) => {
 				console.error('Error during authentication:', error);
@@ -30,7 +29,7 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-fixed" style={{backgroundImage:'url(/images/title.png)'}}>
-			<title>chef's AI | Title</title>
+			<title>chef's AI | Home</title>
 			<div className="flex flex-col items-center mb-8">
 				<Image
 					src="/images/logo.png"
