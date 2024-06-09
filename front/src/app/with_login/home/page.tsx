@@ -29,7 +29,7 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-fixed" style={{backgroundImage:'url(/images/title.png)'}}>
-			<title>title</title>
+			<title>chef's AI | Home</title>
 			<div className="flex flex-col items-center mb-8">
 				<Image
 					src="/images/logo.png"
