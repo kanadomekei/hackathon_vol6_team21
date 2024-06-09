@@ -39,6 +39,7 @@ const Page: FC<PageProps> = ({ params }) => {
 
   return (
     <div className="flex flex-wrap justify-center p-6 bg-white min-h-screen ml-64">
+      <title>recipe</title>
       post_id: {params.post_id}<br />
       {recipe && recipe.details && (
         <div>
