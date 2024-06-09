@@ -149,7 +149,7 @@ const CombinedUpload: FC = () => {
         </button>
         {recipeData && (
           <div>
-            <div>
+            {/* <div>
               <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
               <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
               <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
@@ -160,7 +160,7 @@ const CombinedUpload: FC = () => {
               </ul>
               <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
               <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process.join(', ')}</p>
-            </div>  
+            </div>   */}
             <button
               className="w-full py-3 mt-4 bg-green-500 text-white rounded-lg font-roboto font-semibold transition duration-200 ease-in-out hover:bg-green-400"
               onClick={handleFinalUpload}
