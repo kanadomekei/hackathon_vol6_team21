@@ -7,13 +7,14 @@ interface RecipeData {
   recipe_name: string;
   ingredients: Record<string, string>;
   cooking_process: string[];
+  image_url: string; // 追加
 }
 
 const CombinedUpload: FC = () => {
   const { data: session } = useSession();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [recipeData, setRecipeData] = useState<RecipeData | null>(null);
+  const [recipeDataList, setRecipeDataList] = useState<RecipeData[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,47 +73,18 @@ const CombinedUpload: FC = () => {
     formData.append('img', file, file.name);
 
     const data = await uploadData('http://localhost:8080/ai/create_recipe', formData, 'レシピ生成に失敗しました');
-    setRecipeData(data);
-  };
-
-  const handleFinalUpload = async () => {
-    if (!file || !recipeData) {
-      alert('ファイルまたはレシピデータがありません');
-      return;
-    }
-
-    const email = session?.user?.email;
-    const userId = email ? await fetchUserId(email) : null;
-    if (!userId) {
-      alert('ユーザーIDの取得に失敗しました');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('caption', recipeData.recipe_name);
-
-    const responseData = await uploadData(`http://localhost:8080/posts?user_id=${userId}&caption=%E6%96%99%E7%90%86%E3%81%AE%E8%AA%AC%E6%98%8E`, formData, '最終アップロードに失敗しました');
-    if (responseData) {
-      const post_id = responseData.id;
-      const jsonResponse = await fetch(`http://localhost:8080/recipes?post_id=${post_id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(recipeData),
-      });
-
-      if (!jsonResponse.ok) {
-        throw new Error('レシピデータの送信に失敗しました');
-      }
-      alert('アップロード成功！');
+    if (data) {
+      const newRecipeData = {
+        ...data,
+        image_url: selectedImage, // 追加
+      };
+      setRecipeDataList(prevList => [...prevList, newRecipeData]);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center bg-[#fafafa]">
-      <div className="w-full max-w-[500px] bg-white shadow-md rounded-lg p-8">
+      <div className="w-full max-w-[900px] bg-white shadow-md rounded-lg p-8">
         <h1 className="text-2xl font-bold text-center mb-6 font-roboto">
           料理の画像をアップロードして原材料と調理工程を知る
         </h1>
@@ -148,25 +120,42 @@ const CombinedUpload: FC = () => {
         >
           {isUploading ? 'レシピ生成中...' : 'レシピ生成'}
         </button>
-        {recipeData && (
-          <div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
-              <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
-              <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
-              <ul className="list-disc pl-5">
-                {Object.entries(recipeData.ingredients).map(([ingredient, quantity]) => (
-                  <li key={ingredient} className="text-lg text-gray-900">{`${ingredient}: ${quantity}`}</li>
-                ))}
-              </ul>
-              <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
-              <p className="text-xl font-semibold text-gray-900">{recipeData.cooking_process.join(', ')}</p>
-            </div>  
-          </div>
-          )}
-          </div>
-          </div>
-          );
-          }
-          
-          export default CombinedUpload;
+        {recipeDataList.length > 0 && (
+  <div className="w-full mt-6">
+    {recipeDataList.map((recipeData, index) => (
+      <div key={index} className="mb-6 flex w-[160%]">
+        <div className="w-1/2 pr-4">
+          <h2 className="text-lg font-semibold text-gray-700 mt-4">レシピ名</h2>
+          <p className="text-xl font-semibold text-gray-900">{recipeData.recipe_name}</p>
+          <h2 className="text-lg font-semibold text-gray-700 mt-4">原材料</h2>
+          <ul className="list-disc pl-5">
+            {Object.entries(recipeData.ingredients).map(([ingredient, quantity]) => (
+              <li key={ingredient} className="text-lg text-gray-900">{`${ingredient}: ${quantity}`}</li>
+            ))}
+          </ul>
+          <h2 className="text-lg font-semibold text-gray-700 mt-4">調理工程</h2>
+          <ul className="list-disc pl-5 w-[130%]"> {/* 幅を1.3倍に設定 */}
+            {recipeData.cooking_process.map((step, index) => (
+              <li key={index} className="text-lg text-gray-900">{step}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="w-1/2">
+          <Image
+            src={recipeData.image_url}
+            alt="Selected preview"
+            width={300}
+            height={300}
+            className="object-cover rounded-lg"
+          />
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+      </div>
+    </div>
+  );
+}
+
+export default CombinedUpload;
