@@ -16,8 +16,17 @@ interface Recipe {
   };
 }
 
+interface Post {
+  caption: string;
+  id: number;
+  user_id: number;
+  image_url: string;
+  created_at: string;
+}
+
 const Page: FC<PageProps> = ({ params }) => {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -33,17 +42,36 @@ const Page: FC<PageProps> = ({ params }) => {
         console.error('Error fetching recipe:', error);
       }
     };
+    
+    const fetchPost = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/posts/${params.post_id}`, {
+          headers: {
+            'accept': 'application/json',
+          },
+        });
+        const data = await response.json();
+        console.log(response);
+        console.log(data);
+        setPost(data);
+      } catch (error) {
+        console.error('Error fetching recipe:', error);
+      }
+    };
 
     fetchRecipe();
+    fetchPost();
   }, [params.post_id]);
 
   return (
     <div className="flex flex-wrap justify-center p-6 bg-white min-h-screen ml-64">
       <title>recipe</title>
-      post_id: {params.post_id}<br />
       {recipe && recipe.details && (
         <div>
-          <h2>{recipe.details.recipe_name}</h2>
+          
+          <h1 className="font-bold text-xl mb-2">
+            レシピNo.{params.post_id} {recipe.details.recipe_name}
+          </h1>
           <p className="font-bold">材料</p>
           <ul className="mt-2 divide-y divide-gray-200">
             {Object.entries(recipe.details.ingredients).map(([ingredient, amount]) => (
@@ -53,7 +81,7 @@ const Page: FC<PageProps> = ({ params }) => {
               </li>
               ))}
           </ul>
-          <br></br>
+          <br />
           <p className="font-bold">調理方法</p>
           <ol className="mt-2 divide-y divide-gray-200">
             {recipe.details.cooking_process.map((step, index) => (
