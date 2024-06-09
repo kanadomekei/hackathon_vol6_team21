@@ -34,6 +34,7 @@ function MainComponent() {
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <title>Search</title>
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <input type="file" onChange={handleFileChange} className="mb-4" />
         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
