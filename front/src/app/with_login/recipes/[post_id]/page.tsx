@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, FC } from 'react';
+import Image from 'next/image';
 
 interface PageProps {
   params: { post_id: number };
@@ -66,9 +67,19 @@ const Page: FC<PageProps> = ({ params }) => {
   return (
     <div className="flex flex-wrap justify-center p-6 bg-white min-h-screen ml-64">
       <title>recipe</title>
-      {recipe && recipe.details && (
+      {recipe && recipe.details && post && (
         <div>
-          
+          <div className="flex justify-center items-center">
+            <Image
+              src={post.image_url}
+              alt={`image-${params.post_id}`}
+              width={500}
+              height={500}
+              objectFit="cover"
+              className="rounded-lg"
+            />
+          </div>
+          <br />
           <h1 className="font-bold text-xl mb-2">
             レシピNo.{params.post_id} {recipe.details.recipe_name}
           </h1>
