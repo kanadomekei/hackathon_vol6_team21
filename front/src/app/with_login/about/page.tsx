@@ -9,7 +9,7 @@ function MainComponent() {
     >
     <div className="flex flex-col items-center mb-8 bg-[#ffffff] bg-opacity-80 p-8 rounded-lg shadow-md">
       <div className="text-center mt-8"> 
-            <title>About</title>
+            <title>chef's AI | About</title>
             <h2 className="text-6xl font-roboto text-[#000000] mb-4">
             Chef's AIの使用方法
             </h2>
