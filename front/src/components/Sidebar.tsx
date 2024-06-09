@@ -12,7 +12,7 @@ export default function Sidebar() {
     <div className="fixed left-0 top-0 flex">
       <div className="w-64 h-screen bg-gray-100 p-4 flex flex-col">
         <h1 className="text-2xl font-bold mb-4">app name</h1>
-        <SidebarItem icon="home" label="Home" href="/" />
+        <SidebarItem icon="home" label="Home" href="/with_login/home" />
         <SidebarItem icon="search" label="Search" href="/with_login/search" />
         <SidebarItem icon="about" label="About" href="/with_login/about" />
         <SidebarItem icon="画像一覧" label="images" href="/with_login/images" />
