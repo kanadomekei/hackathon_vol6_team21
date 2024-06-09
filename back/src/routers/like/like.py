@@ -27,7 +27,7 @@ def read_like_by_user_id(post_id: int, user_id: int, db: Session = Depends(get_d
     if(existing_like):
         return {"islike": True, "id": existing_like.id}
     else:
-        return {"islike": False}
+        return {"islike": False, "id": None}
 
 
 @router.post("/likes")
