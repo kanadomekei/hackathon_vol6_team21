@@ -168,7 +168,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
             className="relative w-3/4 h-3/4 flex items-center justify-center" // 親要素を中央に配置するためのスタイリングを追加
           >
             <div
-              className="flex items-center justify-center" // fullの指定削除
+              className="relative flex items-center justify-center" // fullの指定削除
               onClick={(e) => e.stopPropagation()} // 追加
             >
               <Link href={`recipes/${currentIndex + 1}`}>
@@ -183,7 +183,7 @@ export default function ImageGallery({ images }: ImageGalleryProps) {
                 />
               </Link>
               <button
-                className={`absolute right-64 top-1/2 transform -translate-y-1/2 px-16 py-8 rounded text-white text-3xl ${isLiked[currentIndex] ? 'bg-red-500' : 'bg-gray-500'}`}
+                className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-4 px-16 py-8 rounded text-white text-3xl ${isLiked[currentIndex] ? 'bg-red-500' : 'bg-gray-500'}`}
                 onClick={(e) => toggleLikeImage(e, currentIndex)}
               >
                 {likeCounts[currentIndex]} {isLiked[currentIndex] ? 'Liked!' : 'Liked'}
